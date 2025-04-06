@@ -1,0 +1,105 @@
+#############################################################################
+#----------------------------- Window Behavior -----------------------------#
+#############################################################################
+
+#--------------- General Applications ---------------#
+for_window [title="Calculator"] floating enable
+for_window [title="Timer"] floating enable
+for_window [class="librewolf"] border none
+
+#--------------- Web Browsers ---------------#
+for_window [class="^qutebrowser" title="(?i)Brave Search"] border normal, floating enable, resize set 1048 708
+for_window [class="firefox"] border none
+
+#--------------- File Managers ---------------#
+for_window [title="(?)feh"] floating enable, move position center, focus
+for_window [title="Open Folder"] floating enable, resize set 1044 615, move position center, focus
+for_window [title="^Event\ Tester"] floating enable, move position center, focus
+for_window [title="^Open File"] floating enable, resize set 848 551, move position center, focus
+for_window [title="Tilda 0 Config"] floating enable, border normal, resize set 1022 655, move position center, focus
+
+
+#--------------- System Utilities ---------------#
+for_window [class="waitonlogin"] move to workspace 5, focus, fullscreen
+for_window [title="htop"] focus
+for_window [window_role="GtkFileChooserDialog"] floating enable, border normal, resize set 813 766, move position center, focus
+for_window [window_type="dialog"] floating enable, border normal, resize set 739 476, move position center, focus
+for_window [class="KeePassXC"] floating enable, border normal, resize set 890 659, move to position pointer
+for_window [title="^glow"] focus
+for_window [title="^Guake\ Preferences"] floating enable, focus
+
+#--------------- Multimedia Applications ---------------#
+for_window [class="^mpv"] focus
+for_window [class="imv"] floating enable
+for_window [class="zenity"] floating enable
+for_window [class="Gpick"] border normal, floating enable
+for_window [class="^FMIT$"] floating enable, resize set 660 538, move position center, focus
+for_window [class="^Gpick"] floating enable, resize set 958 687, move position center, focus
+for_window [class="^Pavucontrol"] floating enable, resize set 918 570, move position center, focus
+for_window [class="^RaySession$" title="(?i)Add Application"] floating enable, resize set 1028 690, move position center
+for_window [class="^RaySession$" title="(?i)Previous session"] floating enable, resize set 571 273, move position center
+for_window [class="^Timemachine"] floating enable, move position center, focus
+
+for_window [title="Live Caption"], floating enable, move to position 13px 40px, focus
+#--------------- Custom Utilities ---------------#
+for_window [class="kitty" title="dictation.sh"] floating enable, move output primary, resize set 1197 526, move position 944px 3278, sticky enable, focus
+for_window [class="notepad"] floating enable, resize set 998 1035, move output DVI-D-0, move to position center, focus
+for_window [class="noteinfo"] floating enable, resize set 586 687, move position center, focus
+for_window [class="weather"] floating enable, resize set 834 626, move output primary, move to position center, focus
+for_window [class="checklog"] floating enable, move to workspace 5, resize set 2449 1353, move position center, focus
+for_window [class="govna"] floating enable, resize set 678 491, move to position center, focus
+for_window [class="brightness"] floating enable, resize set 1007 631, move to position center, focus
+
+#--------------- Scratchpad ---------------#
+for_window [title="^Artha"] floating enable, move position center, resize set 838 755, move to scratchpad
+for_window [class="(?i)jack-keyboard"] border normal, floating enable, move to scratchpad
+for_window [title="(?i)Mamba"] floating enable, move position center, resize set 640 480
+for_window [class="^VMPK"] border normal, floating enable
+
+#--------------- Reaper ---------------#
+for_window [class="^Zenity" title="reaper projects"] move to position center, focus
+for_window [class="REAPER" title="^Mixer"] floating disable, focus
+for_window [class="REAPER" title="(?i)JS:"] border normal, floating enable, move to output center, focus
+for_window [class="REAPER" title="(?i)CLAP:"] border normal, floating enable, move to position pointer, focus
+for_window [class="REAPER" title="(?i)VST:"] border normal, floating enable, move position center, focus
+for_window [class="REAPER" title="(?i)VST3:"] border normal, floating enable, move position center, focus
+for_window [class="REAPER" title="(?i)LV2:"] border normal, floating enable, move position center, focus
+for_window [class="REAPER" title="(?i)Add FX to"] border normal, floating enable, move position center, focus
+for_window [class="REAPER" title="(?i)FX"] border normal, floating enable, move position center, focus
+for_window [title="^Docker"] floating disable
+for_window [title="^Toolbar"] floating disable
+for_window [title="^MIDI take:"] floating disable
+
+#--------------- Non-Mixer ---------------#
+for_window [class="Non-Mixer" title="^Mixer"] border normal
+for_window [class="Non-Mixer" title="(?i)Plugin \:(?i)"] floating enable, move to position pointer, focus
+for_window [class="Non-Mixer" title="(?i)Gain \:(?i)"] floating enable, move to position pointer, focus
+for_window [class="Non-Mixer" title="(?i)AUX \:(?i)"] floating enable, move to position pointer, focus
+
+#--------------- Calf ---------------#
+for_window [class="^calfjackhost"] floating enable
+for_window [class="^Calfjackhost"] floating enable, move position center, focus
+
+#--------------- Hydrogen ---------------#
+for_window [class="^Hydrogen"] layout toggle split h, move up
+for_window [class="^Hydrogen" title="^Mixer"] move down, resize shrink height 400px
+
+#--------------- Meters ---------------#
+for_window [class="(?i)zita-mu1"] border normal, floating enable, move position center
+for_window [title="^zita-rev1"] border normal, floating enable
+for_window [title="(?i)Luftikus"] floating enable
+
+#--------------- x42 ---------------#
+for_window [title="(?i)EBU R128 Meter"] border normal
+for_window [title="(?i)x42-dpl"] floating enable
+for_window [title="(?i)x42-comp"] floating enable
+for_window [title="(?i)x42-eq"] floating enable, move position center, focus
+for_window [title="(?i)Phase/Frequency Wheel"] floating enable, border normal
+for_window [title="(?i)Stereo/Frequency Scope"] floating enable, border normal
+for_window [title="(?i)Phaserotate"] floating enable, border normal
+for_window [title="(?i)Goniometer"] floating enable, border normal
+
+#--------------- Other ---------------#
+for_window [class="Jalv.gtk" title="Helm"] border normal, floating enable
+for_window [class="Jalv.gtk" title="CS10QS-SC"] border normal
+for_window [title="(?i)ambix_"] floating enable, border normal

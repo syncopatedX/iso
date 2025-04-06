@@ -1,0 +1,180 @@
+---
+- name: Build Arch Linux ISO
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Set variables
+      set_fact:
+        src_dir: "{{ ansible_env.PWD }}"
+        archiso_packages:
+          - archiso
+          - curl
+      vars:
+        installer_path: airootfs/usr/local/bin/installer
+        cachyos_mirrorlist_url: "https://github.com/CachyOS/CachyOS-PKGBUILDS/raw/master/cachyos-mirrorlist/cachyos-mirrorlist"
+      register: result
+
+    - name: Ensure required packages are installed
+      pacman:
+        name: "{{ archiso_packages }}"
+        state: present
+      when: "'archiso' not in result.failed"
+
+    - name: Copy installer locally
+      copy:
+        src: "{{ item }}"
+        dest: "{{ installer_path }}"
+      with_fileglob:
+        - "{{ installer_local_path }}"
+      when: installer_local_path is defined and installer_local_path | length > 0
+
+    - name: Update installer remotely
+      get_url:
+        url: "{{ cachyos_mirrorlist_url }}"
+        dest: "{{ installer_path }}"
+        mode: 0755
+        force: yes
+      when: installer_remote_update is defined and installer_remote_update == true
+
+    - name: Enable LTS kernel
+      when: enable_lts_kernel is defined and enable_lts_kernel == true
+      block:
+        - name: Modify packages.x86_64
+          lineinfile:
+            path: packages.x86_64
+            regexp: '^linux$'
+            line: 'linux-lts'
+          when: "'linux-lts' not in packages.x86_64"
+
+        - name: Modify efiboot/loader/entries/*
+          replace:
+            path: "{{ item }}"
+            regexp: '-linux$'
+            replace: '-linux-lts'
+          with_fileglob:
+            - efiboot/loader/entries/*
+
+        - name: Modify syslinux/*.cfg
+          replace:
+            path: "{{ item }}"
+            regexp: '-linux$'
+            replace: '-linux-lts'
+          with_fileglob:
+            - syslinux/*.cfg
+
+        - name: Modify grub/grub.cfg
+          replace:
+            path: grub/grub.cfg
+            regexp: '-linux$'
+            replace: '-linux-lts'
+
+        - name: Modify airootfs/etc/mkinitcpio.d/linux.preset
+          replace:
+            path: airootfs/etc/mkinitcpio.d/linux.preset
+            regexp: '-linux'
+            replace: '-linux-lts'
+
+        - name: Modify profiledef.sh
+          replace:
+            path: profiledef.sh
+            regexp: '"syncopated"'
+            replace: '"syncopated-lts"'
+
+    - name: Enable RT kernel
+      when: enable_rt_kernel is defined and enable_rt_kernel == true
+      block:
+        - name: Modify packages.x86_64
+          lineinfile:
+            path: packages.x86_64
+            regexp: '^linux$'
+            line: 'linux-rt'
+          when: "'linux-rt' not in packages.x86_64"
+
+        - name: Modify efiboot/loader/entries/*
+          replace:
+            path: "{{ item }}"
+            regexp: '-linux$'
+            replace: '-linux-rt'
+          with_fileglob:
+            - efiboot/loader/entries/*
+
+        - name: Modify syslinux/*.cfg
+          replace:
+            path: "{{ item }}"
+            regexp: '-linux$'
+            replace: '-linux-rt'
+          with_fileglob:
+            - syslinux/*.cfg
+
+        - name: Modify grub/grub.cfg
+          replace:
+            path: grub/grub.cfg
+            regexp: '-linux$'
+            replace: '-linux-rt'
+
+        - name: Modify airootfs/etc/mkinitcpio.d/linux.preset
+          replace:
+            path: airootfs/etc/mkinitcpio.d/linux.preset
+            regexp: '-linux'
+            replace: '-linux-rt'
+
+        - name: Modify profiledef.sh
+          replace:
+            path: profiledef.sh
+            regexp: '"syncopated"'
+            replace: '"syncopated-rt"'
+
+    - name: Enable RT-LTS kernel
+      when: enable_rt_lts_kernel is defined and enable_rt_lts_kernel == true
+      block:
+        - name: Modify packages.x86_64
+          lineinfile:
+            path: packages.x86_64
+            regexp: '^linux$'
+            line: 'linux-rt-lts'
+          when: "'linux-rt-lts' not in packages.x86_64"
+
+        - name: Modify efiboot/loader/entries/*
+          replace:
+            path: "{{ item }}"
+            regexp: '-linux$'
+            replace: '-linux-rt-lts'
+          with_fileglob:
+            - efiboot/loader/entries/*
+
+        - name: Modify syslinux/*.cfg
+          replace:
+            path: "{{ item }}"
+            regexp: '-linux$'
+            replace: '-linux-rt-lts'
+          with_fileglob:
+            - syslinux/*.cfg
+
+        - name: Modify grub/grub.cfg
+          replace:
+            path: grub/grub.cfg
+            regexp: '-linux$'
+            replace: '-linux-rt-lts'
+
+        - name: Modify airootfs/etc/mkinitcpio.d/linux.preset
+          replace:
+            path: airootfs/etc/mkinitcpio.d/linux.preset
+            regexp: '-linux'
+            replace: '-linux-rt-lts'
+
+        - name: Modify profiledef.sh
+          replace:
+            path: profiledef.sh
+            regexp: '"syncopated"'
+            replace: '"syncopated-rt-lts"'
+
+    - name: Fetch CachyOS mirrorlist
+      get_url:
+        url: "{{ cachyos_mirrorlist_url }}"
+        dest: airootfs/etc/pacman.d/cachyos-mirrorlist
+      when: cachyos_mirrorlist_url is defined
+
+    - name: Build Arch Linux ISO
+      command: "mkarchiso -v ."
+      args:
+        chdir: "{{ src_dir }}"

@@ -1,0 +1,53 @@
+## theme ui
+
+font pango:Hack Nerd Font 14
+
+# class             border      bground    text      indicat    child_border
+client.focused  $border-color $bg-color $text-color $indicator $child-border
+
+client.focused_inactive  #2a2a2a #6c6c6c #4a4d44 #2a2a2a #2a2a2a
+
+client.unfocused #2a2a2a #000000 #4a4d44 #33eb1c #2a2a2a
+
+client.urgent #2a8e10 #000000 #4a4d44 #33eb1c #2a2a2a
+
+client.placeholder #2a2a2a #249043 #4a4d44 #33eb1c #2a2a2a
+
+client.background #000000
+
+###############################################################
+##-------------------- Bar        ---------------------------##
+###############################################################
+
+bar {
+        id bar-primary
+        font pango:Hack Nerd Font 14
+        modifier none
+
+        workspace_buttons yes
+
+        position top
+
+        i3bar_command i3bar
+
+        colors {
+          background #000000
+          statusline #794794
+          separator #282828
+
+#         <colorclass>       <border>                            <background>               <text>
+          focused_workspace  #005F89 #005F89 #ebdbb2
+          active_workspace   #2a2a2a #000000 #4a4d44
+          inactive_workspace #2a2a2a #6c6c6c #4a4d44
+          urgent_workspace   #2a8e10 #000000 #4a4d44
+          binding_mode       #2a2a2a #249043 #4a4d44
+        }
+
+        status_command /usr/bin/i3status-rs ~/.config/i3status-rust/config.toml
+
+        workspace_min_width 50
+        height 32
+
+        tray_output "primary"
+        tray_padding 2
+}

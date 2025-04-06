@@ -1,0 +1,124 @@
+super + Menu
+	cat ~/.config/jgmenu/apps.csv | jgmenu --simple
+
+super + o ; {g,a,k,v}
+	{terminator,alacritty,jack-keyboard,vmpk}
+
+control + Menu
+  wmfocus
+
+alt + Next
+  wmfocus
+
+super + Prior
+  ~/Utils/bin/search_web.sh
+
+Menu
+  ~/.config/rofi/scripts/launcher_t1.sh
+
+#super + d
+#  rofi -no-lazy-grab -show drun -modi run,drun,window
+super + d
+  ~/.config/rofi/scripts/launcher_t1.sh
+
+super + F5
+  terminator --class "htop" -e htop
+
+super + alt + n
+  terminator --class "notepad" -e notepad.sh
+
+F12
+  search_web.sh
+
+shift + F12
+  search_devdocs.sh
+
+XF86Search ; {d,w}
+  {search_devdocs.sh,search_web.sh}
+
+alt + Tab
+  rofi -no-lazy-grab -show window -modi run,drun,window
+
+alt + shift + Return
+  ~/.config/rofi/scripts/launcher_t4.sh
+
+XF86Paste
+  xclip -o
+
+alt + shift + KP_1
+  tilda -g ~/.config/tilda/config_0
+
+control + XF86LaunchB
+  xfce4-terminal --drop-down
+
+XF86AudioLowerVolume
+  amixer -c 0 set Master 3db-
+
+XF86AudioRaiseVolume
+  amixer -c 0 set Master 3db+
+
+super + XF86AudioRaiseVolume
+  amixer -c 0 set Master toggle
+
+shift + XF86AudioLowerVolume
+  pactl -- set-sink-volume 0 -5%
+
+shift + XF86AudioRaiseVolume
+  pactl -- set-sink-volume 0 +5%
+
+super + XF86AudioLowerVolume
+  pactl -- set-sink-mute 0 toggle
+
+super + x
+  xkill
+
+#super + End
+#	terminator
+
+super + Home
+  google-chrome-stable --new-window --disable-gpu %U /usr/share/nginx/html/homepage/index.html
+
+super + shift + Home
+  google-chrome-stable --disable-gpu --incognito %U /usr/share/nginx/html/homepage/index.html
+
+super + KP_Enter
+  terminator -e ranger
+
+super + shift + KP_Enter
+  thunar
+
+Print
+  teiler
+
+shift + Print
+  maim -u -s | xclip -selection clipboard -t image/png
+
+super + Print
+  simplescreenrecorder --start-hidden
+
+XF86AudioMute
+  mic_mute.sh mute
+
+super + XF86AudioMute
+  mic_mute.sh unmute
+
+Print
+  sendmidi dev 'Midi Through Port-0' panic
+
+#XF86MonBrightnessDown
+#  brightnessctl -d intel_backlight s 10%-
+
+#XF86MonBrightnessUp
+#  brightnessctl -d intel_backlight s +10%
+
+#control + alt + End
+#  uxterm -class 'backup' -e sudo shutdown -h now
+
+control + alt + Home
+  uxterm -class 'backup' -e sudo shutdown -r now
+
+XF86AudioMicMute
+  sendmidi dev 'Midi Through Port-0' cc 13 127
+
+super + comma
+  sendmidi dev 'Midi Through Port-0' cc 13 0

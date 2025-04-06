@@ -1,0 +1,61 @@
+! Base colors
+*.foreground:  #838d6e
+*.background:  #000000
+*.cursorColor: #a38e1d
+
+*.color0: #000000
+*.color1: #E32C2C
+*.color2: #4E9A06
+*.color3: #468A35
+*.color4: #C92CA8
+*.color5: #96363C
+*.color6: #06989A
+*.color7: #77767B
+*.color8: #1C71D8
+*.color9: #EF2929
+*.color10: #8AE234
+*.color11: #FCE94F
+*.color12: #729FCF
+*.color13: #865E3C
+*.color14: #34E2E2
+*.color15: #1C8B1C
+
+! xterm
+xterm*termName: xterm-256color
+xterm*font: Hack Nerd Font
+xterm*faceName: Hack Nerd Font:size=12
+
+xterm*loginShell: true
+xterm*vt100*geometry: 90x34
+xterm*saveLines: 8000
+xterm*charClass: 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48
+xterm*eightBitInput: false
+
+! copy-paste
+XTerm.vt100.translations: #override \n\
+	Ctrl Shift <KeyPress> C: copy-selection(CLIPBOARD) \n\
+	Ctrl Shift <KeyPress> V: insert-selection(CLIPBOARD)
+
+! URxvt
+URxvt*saveline: 15000
+URxvt*termName: rxvt-256color
+URxvt*iso14755: false
+URxvt*depth: 32
+URxvt*background: [95]#1C2023
+URxvt*scrollBar: false
+URxvt*scrollBar_right: false
+URxvt*internalBorder: 0
+URxvt*externalBorder: 0
+URxvt*letterSpace: -1
+URxvt.font: xft:Hack Nerd Font:size=10
+URxvt.copyCommand: xclip -i -selection clipboard
+URxvt.pasteCommand: xclip -o -selection clipboard
+URxvt.urlLauncher: exo-open
+URxvt.underlineURLs: true
+URxvt.urlButton: 1
+URxvt.geometry: 90x34
+URxvt.tabbed.tabbar-fg: 4
+URxvt.tabbed.tabbar-bg: 16
+URxvt.tabbed.tab-fg: 15
+URxvt.tabbed.tab-bg: 4
+URxvt*buffered: false

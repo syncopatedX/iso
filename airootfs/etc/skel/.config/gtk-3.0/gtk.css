@@ -1,0 +1,16 @@
+/* BEGIN ANSIBLE MANAGED BLOCK */
+#zim-pageview text {
+    background-color: #0D0D0D;  /* changes the background color of the Zim's page editor */
+    color: #a29e9e; /* foreground text color */
+  }
+
+#zim-toc-widget {
+  color: #2b2b2b;  /* sets the color of the border line of the Table of Content plugin */
+  opacity: 0.9;    /* give the ToC some nice transparency */
+  font-size: 12px; /* ToC font size */
+  }
+
+#zim-toc-widget scrolledwindow treeview {
+  color: #BABABA;  /* sets the color of the text within the Table of Content plugin */
+  opacity: 1;
+  }

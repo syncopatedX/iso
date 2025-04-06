@@ -1,0 +1,170 @@
+###############################################################
+##-------------------- Navigation ----------------------##
+###############################################################
+
+### kill focused window
+bindsym F1 kill
+bindsym $mod+q kill
+bindsym $mod+KP_Subtract kill
+
+# start dmenu (a program launcher)
+#bindsym ctrl+space exec rofi -show run
+# bindsym ctrl+space exec "rofi -show combi -modi window,run,combi -combi-modi window,run"
+#bindsym ctrl+space exec dmenu_run
+
+bindsym $mod+space focus mode_toggle
+# alternatively, you can use the cursor keys:
+
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+### container layout
+bindsym $mod+v split h
+bindsym $mod+h split v
+bindsym $mod+Shift+t layout tabbed
+bindsym $mod+Shift+s layout stacking
+bindsym $mod+Shift+h layout splitv
+bindsym $mod+Shift+v layout splith
+
+bindsym $mod+t split toggle
+
+# enter fullscreen mode for the focused container
+bindsym F11 fullscreen toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+### switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+bindcode $mod+Mod2+$KP_1 workspace $ws1
+bindcode $mod+Mod2+$KP_2 workspace $ws2
+bindcode $mod+Mod2+$KP_3 workspace $ws3
+bindcode $mod+Mod2+$KP_4 workspace $ws4
+bindcode $mod+Mod2+$KP_5 workspace $ws5
+bindcode $mod+Mod2+$KP_6 workspace $ws6
+bindcode $mod+Mod2+$KP_7 workspace $ws7
+bindcode $mod+Mod2+$KP_8 workspace $ws8
+bindcode $mod+Mod2+$KP_9 workspace $ws9
+bindcode $mod+Mod2+$KP_0 workspace $ws10
+
+bindcode $mod+Shift+Mod2+$KP_1 move container to workspace $ws1
+bindcode $mod+Shift+Mod2+$KP_2 move container to workspace $ws2
+bindcode $mod+Shift+Mod2+$KP_3 move container to workspace $ws3
+bindcode $mod+Shift+Mod2+$KP_4 move container to workspace $ws4
+bindcode $mod+Shift+Mod2+$KP_5 move container to workspace $ws5
+bindcode $mod+Shift+Mod2+$KP_6 move container to workspace $ws6
+bindcode $mod+Shift+Mod2+$KP_7 move container to workspace $ws7
+bindcode $mod+Shift+Mod2+$KP_8 move container to workspace $ws8
+bindcode $mod+Shift+Mod2+$KP_9 move container to workspace $ws9
+bindcode $mod+Shift+Mod2+$KP_0 move container to workspace $ws10
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+bindsym XF86Back workspace prev
+bindsym XF86Forward workspace next
+
+# Register Keybindings
+
+###############################################################
+##-------------------- Launchers ----------------------##
+###############################################################
+
+# bindsym XF86RotateWindows '[class="URxvt" title="scriber.rb"]' focus
+
+bindsym XF86RotateWindows $exec /mnt/bender/backup/weather.sh
+# bindsym XF86AudioRecord $exec
+
+# bindsym Control+Menu $exec wmfocus
+#
+# bindsym Menu $exec ~/.config/rofi/scripts/launcher_t1.sh
+#
+# bindsym XF86Search+d $exec /usr/local/bin/search_devdocs.sh
+# bindsym XF86Search+w $exec /usr/local/bin/search_web.sh
+#
+# bindsym XF86AudioRecord $exec terminator --class "notepad" -e /usr/local/bin/# scriber.rb
+#
+# bindsym $mod+XF86AudioRecord $exec terminator --class "notepad" -e /usr/local/# bin/scriber.rb --new-file
+#
+# bindsym XF86Paste $exec xclip -o
+
+bindsym $mod+Shift+m sticky toggle
+bindsym $mod+Shift+space floating toggle
+
+bindsym XF86Launch4 move scratchpad
+bindsym XF86Launch8 scratchpad show
+
+bindsym Control+XF86Launch1 floating disable, focus
+
+bindsym XF86Launch6 [class="(?)Zita-mu1"] move to position pointer, focus
+bindsym XF86Launch7 [class="(?i)Jack_mixer"] move to position pointer, focus
+
+##### bindsym
+##### bindsym XF86Launch5
+##### bindsym XF86Launch6
+##### bindsym XF86Launch7
+##### bindsym XF86Launch8
+bindsym $alt+XF86LaunchB [class="(?i)terminator"] scratchpad show
+bindsym $mod+F7 [title="^jack-keyboard"] scratchpad show
+bindsym $mod+F9 [class="^VMPK"] scratchpad show
+
+##### bindsym <var> focus output HDMI-1
+##### bindsym <var> focus output HDMI-2
+##### bindsym XF86LaunchB nop dropdown
+
+bindsym $mod+Return $exec terminator
+
+#############################
+#### ---{ other }--- ###
+#############################
+
+#### The right button toggles floating
+##### bindsym button2 --release --whole-window floating toggle
+##### bindsym $mod+button2 --release --whole-window floating toggle
+
+#bindsym XF86AudioRaiseVolume exec "pamixer -ui 3 && pamixer --get-volume > /tmp/xobpipe"
+#bindsym XF86AudioLowerVolume exec "pamixer -ud 3 && pamixer --get-volume > /tmp/xobpipe"
+# mute sound
+#bindsym XF86AudioMute exec "amixer sset Master toggle | sed -En '/\[on\]/ s/.*\[([0-9]+)%\].*/\1/ p; /\[off\]/ s/.*/0/p' | head -1 > /tmp/xobpipe"
+
+#bindsym $mod+Shift+p exec gnome-calculator
+#bindsym $mod+p exec ~/.scripts/dmshot
+
+## This will switch the current layout to the 'us'.
+#bindsym $mod+l exec "setxkbmap -layout us && sleep 0.1 && setxkbmap -option grp:caps_toggle 'us,ru' -option grp_led:caps && sleep 0.1 && i3lock --blur 5"
+
+## This keybind will lock the screen. The lockscreen.
+#bindsym $mod+l exec "sleep 0.1 && i3lock --blur 5"

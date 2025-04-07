@@ -32,6 +32,7 @@ file_permissions=(
   ["/etc/skel/.config/rofi/scripts/launcher_t1.sh"]="0:0:755"
   ["/etc/skel/.config/rofi/scripts/launcher_t4.sh"]="0:0:755"
   ["/etc/skel/.config/ranger/scope.sh"]="0:0:755"
+  ["/etc/skel/.xinitrc"]="0:0:755"
   ["/usr/local/bin/choose-mirror"]="0:0:755"
   ["/usr/local/bin/Installation_guide"]="0:0:755"
   ["/usr/local/bin/livecd-sound"]="0:0:755"

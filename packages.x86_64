@@ -2,6 +2,7 @@ alsa-utils
 amd-ucode
 arch-install-scripts
 archinstall
+archiso
 b43-fwcutter
 base
 bcachefs-tools
@@ -72,7 +73,6 @@ nbd
 ndisc6
 nfs-utils
 nilfs-utils
-net-tools
 nmap
 ntfs-3g
 nvme-cli
@@ -131,6 +131,8 @@ acpi
 alsa-firmware
 alsa-lib
 alsa-plugins
+archiso
+base-devel
 chaotic-keyring
 chaotic-mirrorlist
 b43-firmware

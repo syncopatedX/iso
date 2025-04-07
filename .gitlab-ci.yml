@@ -54,13 +54,17 @@ build_iso:
   #   # - vm   # Or use a VM executor if direct hardware access/privileges are required
   before_script:
     # Install necessary dependencies for building the ISO using mkarchiso and potentially the build script
-    - pacman -Syu --needed --noconfirm archiso squashfs-tools libisoburn dosfstools grub efibootmgr git sudo curl
+    - pacman -Syu --needed --noconfirm archiso squashfs-tools libisoburn dosfstools grub efibootmgr git sudo curl tar
     - pacman-key --init
     - pacman-key --populate
     - pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
     - pacman-key --lsign-key 3056513887B78AEB
     - pacman -U --needed --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
     - pacman -U --needed --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    - pacman -Syu --needed --noconfirm
+    - curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /tmp/cachyos-repo.tar.xz
+    - cd /tmp && tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+    - ./cachyos-repo.sh
     - pacman -Syu --needed --noconfirm
     # Add any other dependencies required by mkarchiso or the build.sh script
     # Add sudoers entry if needed by the build script (runner user might need passwordless sudo)
@@ -165,31 +169,31 @@ build_iso:
 #     - 'PACKAGE_VERSION="${CI_COMMIT_TAG:-${BUILD_VERSION}}"'
 #     - 'echo "Publishing version: ${PACKAGE_VERSION}"'
 
-    # --- GPG Signing (Optional) ---
-    # Uncomment and configure if GPG signing is required
-    # - echo "🔑 Importing GPG key..."
-    # - gpg --import --batch <(echo "${GPG_PRIVATE_KEY}") # Requires GPG_PRIVATE_KEY CI/CD variable
-    # - echo "✍️ Signing ISO..."
-    # - gpg --detach-sign --armor "${ISO_FILE}"
-    # - ISO_SIG_FILE="${ISO_FILE}.asc"
-    # - echo "🔑 Signature file: ${ISO_SIG_FILE}"
-    # ---
+# --- GPG Signing (Optional) ---
+# Uncomment and configure if GPG signing is required
+# - echo "🔑 Importing GPG key..."
+# - gpg --import --batch <(echo "${GPG_PRIVATE_KEY}") # Requires GPG_PRIVATE_KEY CI/CD variable
+# - echo "✍️ Signing ISO..."
+# - gpg --detach-sign --armor "${ISO_FILE}"
+# - ISO_SIG_FILE="${ISO_FILE}.asc"
+# - echo "🔑 Signature file: ${ISO_SIG_FILE}"
+# ---
 
-    # Upload ISO to GitLab Generic Package Registry
-    # - echo "⬆️ Uploading ISO to GitLab Package Registry..."
-    # - |
-    #   curl --fail --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${ISO_FILE}" \
-    #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}/$(basename ${ISO_FILE})"
+# Upload ISO to GitLab Generic Package Registry
+# - echo "⬆️ Uploading ISO to GitLab Package Registry..."
+# - |
+#   curl --fail --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${ISO_FILE}" \
+#     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}/$(basename ${ISO_FILE})"
 
-    # --- Upload Signature (Optional) ---
-    # Uncomment if GPG signing is enabled
-    # - echo "⬆️ Uploading Signature to GitLab Package Registry..."
-    # - |
-    #   curl --fail --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${ISO_SIG_FILE}" \
-    #     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}/$(basename ${ISO_SIG_FILE})"
-    # ---
+# --- Upload Signature (Optional) ---
+# Uncomment if GPG signing is enabled
+# - echo "⬆️ Uploading Signature to GitLab Package Registry..."
+# - |
+#   curl --fail --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${ISO_SIG_FILE}" \
+#     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}/$(basename ${ISO_SIG_FILE})"
+# ---
 
-    # Add other publishing steps here (e.g., upload to mirrors, website)
+# Add other publishing steps here (e.g., upload to mirrors, website)
 
 # ---------------- Cleanup Stage ----------------
 

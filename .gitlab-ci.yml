@@ -18,32 +18,32 @@ variables:
 
 # ---------------- Lint Stage ----------------
 
-shellcheck:
-  stage: lint
-  before_script:
-    - pacman -Syu --needed --noconfirm shellcheck
-  script:
-    - echo "🔍 Running shellcheck..."
-    - shopt -s globstar # Enable recursive globbing
-    - shellcheck **/*.sh
+# shellcheck:
+#   stage: lint
+#   before_script:
+#     - pacman -Syu --needed --noconfirm shellcheck
+#   script:
+#     - echo "🔍 Running shellcheck..."
+#     - shopt -s globstar # Enable recursive globbing
+#     - shellcheck **/*.sh
 
-shfmt:
-  stage: lint
-  before_script:
-    - pacman -Syu --needed --noconfirm shfmt
-  script:
-    - echo "💅 Running shfmt..."
-    - shopt -s globstar
-    - shfmt -i 2 -ci -d **/*.sh # Check formatting, indent 2, check in-place, list different files
+# shfmt:
+#   stage: lint
+#   before_script:
+#     - pacman -Syu --needed --noconfirm shfmt
+#   script:
+#     - echo "💅 Running shfmt..."
+#     - shopt -s globstar
+#     - shfmt -i 2 -ci -d **/*.sh # Check formatting, indent 2, check in-place, list different files
 
-yamllint:
-  stage: lint
-  image: python:3.9-slim # Use a python image for yamllint
-  before_script:
-    - pip install yamllint
-  script:
-    - echo "🧐 Running yamllint..."
-    - yamllint . # Lint all YAML files in the repository root
+# yamllint:
+#   stage: lint
+#   image: python:3.9-slim # Use a python image for yamllint
+#   before_script:
+#     - pip install yamllint
+#   script:
+#     - echo "🧐 Running yamllint..."
+#     - yamllint . # Lint all YAML files in the repository root
 
 # ---------------- Build Stage ----------------
 

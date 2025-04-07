@@ -36,16 +36,16 @@ set $exec_always exec_always --no-startup-id
 ##-------------------- Set Colors ---------------------------##
 ###############################################################
 
-set $border-color #33eb1c
+set $border-color          #33eb1c
 set $inactive-border-color #2a2a2a
 
-set $child-border #33eb1c
+set $child-border          #33eb1c
 set $inactive-child-border #2a2a2a
 
-set $bg-color #000000
+set $bg-color          #000000
 set $inactive-bg-color #6c6c6c
 
-set $text-color #ebdbb2
+set $text-color          #ebdbb2
 set $inactive-text-color #4a4d44
 
 set $urgent-bg-color #000000
@@ -130,4 +130,4 @@ $exec "sleep 1; dex -a -s /etc/xdg/autostart/:~/.config/autostart/"
 ### placed here as for some reason did not execute in .xprofile
 $exec pactl -- set-sink-volume 0 55%
 
-$exec_always "reload-sxhkd.sh; sleep 1"
+$exec_always "~/.local/bin/reload-sxhkd.sh; sleep 1"

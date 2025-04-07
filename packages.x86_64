@@ -43,6 +43,7 @@ irssi
 iw
 iwd
 jfsutils
+kitty
 kitty-terminfo
 ldns
 less
@@ -141,6 +142,7 @@ dunst
 libnotify
 gsimplecal
 lm_sensors
+kitty
 i3-wm
 net-tools
 networkmanager

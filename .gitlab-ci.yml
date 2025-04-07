@@ -72,8 +72,6 @@ build_iso:
     - echo "ISO_FILENAME=${ISO_FULL_FILENAME}" >> build.env
     - export ISO_SIZE_MB=$(du -m "out/${ISO_FULL_FILENAME}" | cut -f1)
     - echo "ISO_SIZE_MB=${ISO_SIZE_MB}" >> build.env
-    - echo "📊 ISO Size: ${ISO_SIZE_MB} MB"
-    - echo "iso_size_megabytes{iso=\"${ISO_NAME}\"} ${ISO_SIZE_MB}" > metrics.txt
   artifacts:
     name: "${CI_PROJECT_NAME}-ISO-${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_IID}"
     paths:
@@ -99,7 +97,7 @@ test_qemu_boot_uefi:
   before_script:
     - pacman -Syu --needed --noconfirm qemu-system-x86_64 edk2-ovmf expect
   script:
-    - echo "🧪 Testing UEFI boot for ISO: ${ISO_FILENAME}"
+    - echo "Testing UEFI boot for ISO ${ISO_FILENAME}"
     - ISO_FILE="out/${ISO_FILENAME}"
 
     # OVMF requires a non-volatile variable store copy
@@ -154,7 +152,7 @@ publish_iso_package:
     # Install GPG if signing is needed
     # - pacman -Syu --needed --noconfirm gnupg
   script:
-    - echo "📦 Publishing ISO: ${ISO_FILENAME}"
+    - echo "📦 Publishing ISO ${ISO_FILENAME}"
     - ISO_FILE="out/${ISO_FILENAME}"
     # Determine package version: use Git tag if available, otherwise use build version (pipeline IID)
     - 'PACKAGE_VERSION="${CI_COMMIT_TAG:-${BUILD_VERSION}}"'

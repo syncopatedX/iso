@@ -2304,9 +2304,9 @@ install_mirrorlist() {
 	[[ -f /etc/pacman.d/mirrorlist.bak ]] || cp -f /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 	if [[ $AUTO_MIRROR ]]; then
-		reflector "${args[@]}" -l 250 -a 24 --score 100 --sort rate -f 5 --save /etc/pacman.d/mirrorlist
+		reflector "${args[@]}" --download-timeout 2 --protocol https --sort rate --score 15 --fastest 20 --save /etc/pacman.d/mirrorlist
 	else
-		reflector "${args[@]}" -c "$MIRROR_COUNTRY" -l 150 -a 24 --score 75 --sort rate -f 5 --save /etc/pacman.d/mirrorlist
+		reflector "${args[@]}" -c "$MIRROR_COUNTRY" --download-timeout 2 --protocol https --sort rate --score 15 --fastest 20 --save /etc/pacman.d/mirrorlist
 	fi
 
 	chmod +r /etc/pacman.d/mirrorlist

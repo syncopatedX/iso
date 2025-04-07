@@ -1,0 +1,133 @@
+###############################################################
+############################ i3 config file (v4) ##############
+###############################################################
+set $mod Mod4
+set $alt Mod1
+set $ctrl_l 37
+set $ctrl_r 105
+
+set $KP_1 87
+set $KP_2 88
+set $KP_3 89
+set $KP_4 83
+set $KP_5 84
+set $KP_6 85
+set $KP_7 79
+set $KP_8 80
+set $KP_9 81
+set $KP_0 90
+set $KP_Enter 104
+
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+set $exec exec --no-startup-id
+set $exec_always exec_always --no-startup-id
+
+###############################################################
+##-------------------- Set Colors ---------------------------##
+###############################################################
+
+set $border-color #33eb1c
+set $inactive-border-color #2a2a2a
+
+set $child-border #33eb1c
+set $inactive-child-border #2a2a2a
+
+set $bg-color #000000
+set $inactive-bg-color #6c6c6c
+
+set $text-color #ebdbb2
+set $inactive-text-color #4a4d44
+
+set $urgent-bg-color #000000
+
+set $indicator #33eb1c
+
+###############################################################
+##-------------------- Window Behavior ----------------------##
+###############################################################
+
+floating_modifier $mod
+
+workspace_auto_back_and_forth yes
+
+for_window [urgent=latest] focus
+
+focus_follows_mouse no
+
+mouse_warping output
+
+focus_on_window_activation urgent
+
+for_window [class="^.*"] border pixel 1
+default_border pixel 1
+
+new_window 1pixel
+new_float normal
+
+default_floating_border normal
+hide_edge_borders none
+
+gaps inner 14
+gaps outer -2
+
+smart_gaps on
+smart_borders on
+
+include $HOME/.config/i3/window_behavior
+
+##------------ {Modes} ----------------------##
+
+include $HOME/.config/i3/modes/resize
+
+##------------ {Key Bindings}   ---------------------------##
+
+include $HOME/.config/i3/keybindings
+
+##------------ {Appearance} ---------------------------##
+
+include $HOME/.config/i3/appearance
+
+#------------- {Workspace Outputs} ---------------------------#
+
+workspace $ws1 output eDP-1
+workspace $ws2 output DP-1-2
+workspace $ws3 output DP-1-2
+workspace $ws4 output DP-1-2
+workspace $ws5 output DP-1-2
+workspace $ws6 output DP-1-1
+workspace $ws7 output DP-1-1
+workspace $ws8 output DP-1-1
+workspace $ws9 output DP-1-1
+workspace $ws10 output DP-1-1
+
+#------------- {Window Assignments} ---------------------------#
+
+# include $HOME/.config/i3/window_assignments
+
+#------------- {Autostart} ---------------------------#
+
+$exec_always xrdb -load ~/.Xresources
+
+$exec_always "pkill picom; sleep 1; DISPLAY=':0' picom -b; sleep 1"
+
+$exec "nm-applet"
+$exec "dunst"
+
+$exec_always nitrogen --restore
+
+$exec "sleep 1; dex -a -s /etc/xdg/autostart/:~/.config/autostart/"
+
+### placed here as for some reason did not execute in .xprofile
+$exec pactl -- set-sink-volume 0 55%
+
+$exec_always "reload-sxhkd.sh; sleep 1"

@@ -50,6 +50,7 @@ typeset -a BASE_PKGS=(
 	"alsa-plugins"
 	"alsa-tools"
 	"alsa-utils"
+	"archiso"
 	"bash"
 	"chaotic-keyring"
 	"chaotic-mirrorlist"

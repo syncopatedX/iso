@@ -54,11 +54,12 @@ build_iso:
   #   # - vm   # Or use a VM executor if direct hardware access/privileges are required
   before_script:
     # Install necessary dependencies for building the ISO using mkarchiso and potentially the build script
-    - pacman -Syu --needed --noconfirm archiso squashfs-tools libisoburn dosfstools grub efibootmgr git sudo
+    - pacman -Syu --needed --noconfirm archiso squashfs-tools libisoburn dosfstools grub efibootmgr git sudo curl
     - pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
     - pacman-key --lsign-key 3056513887B78AEB
     - pacman -U --needed --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
     - pacman -U --needed --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    - pacman -Syu --needed --noconfirm
     # Add any other dependencies required by mkarchiso or the build.sh script
     # Add sudoers entry if needed by the build script (runner user might need passwordless sudo)
     # - echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel_nopasswd

@@ -1,9 +1,9 @@
-NAME="ArchLabs"
-ID=ArchLabs
+NAME="Syncopated"
+ID=Syncopated
 ID_LIKE="arch"
-VERSION_ID=2025.03.11
-PRETTY_NAME="ArchLabs Linux"
+VERSION_ID=2025.04.06
+PRETTY_NAME="Syncopated Linux"
 ANSI_COLOR="0;36"
-HOME_URL="https://archlabslinux.com"
-SUPPORT_URL="https://forum.archlabslinux.com/"
-BUG_REPORT_URL="https://bitbucket.org/archlabslinux"
+HOME_URL="https://gitlab.com/syncopatedX/"
+SUPPORT_URL="https://gitlab.com/syncopatedX/"
+BUG_REPORT_URL="https://gitlab.com/syncopatedX/"

@@ -51,19 +51,18 @@ typeset -a BASE_PKGS=(
 	"alsa-tools"
 	"alsa-utils"
 	"archiso"
-	"bash"
-	"chaotic-keyring"
-	"chaotic-mirrorlist"
 	"aria2"
+	"bash"
 	"bat"
 	"bc"
+	"curl"
 	"cargo"
 	"ccache"
 	"choose"
 	"cmake"
-	"docker"
 	"docker-buildx"
 	"docker-compose"
+	"docker"
 	"downgrade"
 	"duf"
 	"dust"
@@ -86,6 +85,7 @@ typeset -a BASE_PKGS=(
 	"inxi"
 	"iotop"
 	"jq"
+	"kitty"
 	"libmad"
 	"libmatroska"
 	"lnav"
@@ -93,7 +93,6 @@ typeset -a BASE_PKGS=(
 	"most"
 	"nodejs"
 	"npm"
-	"paru"
 	"python-pip"
 	"python-setuptools"
 	"rofi"
@@ -101,13 +100,15 @@ typeset -a BASE_PKGS=(
 	"rubygems"
 	"sd"
 	"sudo"
+	"sxhkd"
 	"vorbis-tools"
 	"wget"
 	"xdg-user-dirs"
-	"xorg"
 	"xorg-drivers"
 	"xorg-xwayland"
+	"xorg"
 	"yadm"
+	"zoxide"
 ) # }
 
 # general packages for window managers to provide some basic functionality {
@@ -121,17 +122,15 @@ typeset -a WM_PKGS=(
 	"broot"
 	"btop"
 	"calcurse"
-	"cbonsai"
 	"dconf"
+	"dmenu"
 	"dunst"
 	"feh"
 	"fontforge"
-	"gedit"
-	"gedit-markdownpreview-git"
 	"gedit-plugins"
+	"gedit"
 	"geoclue"
 	"gitui"
-	"gksu"
 	"gnu-free-fonts"
 	"google-chrome"
 	"gpick"
@@ -149,9 +148,7 @@ typeset -a WM_PKGS=(
 	"lolcat"
 	"lxappearance"
 	"maim"
-	"metagedit-git"
 	"micro"
-	"mpv"
 	"mpv"
 	"nitrogen"
 	"nvtop"
@@ -160,7 +157,6 @@ typeset -a WM_PKGS=(
 	"opendesktop-fonts"
 	"openscad"
 	"openslide"
-	"pgmodeler"
 	"picom"
 	"polkit-gnome"
 	"python-virtualenv"
@@ -168,13 +164,20 @@ typeset -a WM_PKGS=(
 	"rtmidi"
 	"scrot"
 	"seahorse"
-	"shotcut"
 	"sxiv"
 	"texlive-fontsextra"
 	"texlive-fontsrecommended"
 	"timeshift"
 	"tldr"
 	"tree"
+	"ttf-devicons"
+	"ttf-font-awesome"
+	"ttf-hack-nerd"
+	"ttf-icomoon-feather"
+	"ttf-input"
+	"ttf-jetbrains-mono"
+	"ttf-liberation"
+	"ttf-opensans"
 	"ttf-ubuntu-font-family"
 	"tuned"
 	"vlc"
@@ -182,8 +185,6 @@ typeset -a WM_PKGS=(
 	"webkit2gtk"
 	"wmctrl"
 	"wmfocus"
-	"wordnet-cli"
-	"wordnet-tk"
 	"xclip"
 	"xdg-user-dirs"
 	"xdotool"
@@ -193,65 +194,185 @@ typeset -a WM_PKGS=(
 	"yt-dlp"
 	"zenity"
 	"zoxide"
+	"zsh-autocomplete"
 	"zsh-completions"
+	"zsh-syntax-highlighting"
 ) # }
 
 # packages installed to parity the .iso {
 typeset -a ISO_PKGS=(
-	"crda"
+	"acpi"
+	"alsa-firmware"
+	"alsa-lib"
+	"alsa-plugins"
+	"alsa-utils"
+	"amd-ucode"
+	"arch-install-scripts"
+	"archinstall"
+	"aria2"
+	"b43-firmware"
+	"b43-fwcutter"
+	"base-devel"
+	"base"
+	"bash"
+	"bcachefs-tools"
+	"bind"
+	"bolt"
+	"brltty"
+	"broadcom-wl"
+	"btrfs-progs"
+	"cargo"
+	"chaotic-keyring"
+	"chaotic-mirrorlist"
+	"clonezilla"
+	"cloud-init"
+	"cryptsetup"
+	"curl"
+	"darkhttpd"
 	"ddrescue"
-	"dhclient"
 	"dhcpcd"
+	"dialog"
 	"diffutils"
+	"dmenu"
+	"dmidecode"
 	"dmraid"
 	"dnsmasq"
-	"dnsutils"
 	"dosfstools"
+	"dunst"
+	"e2fsprogs"
+	"edk2-shell"
+	"efibootmgr"
+	"espeakup"
 	"ethtool"
-	"exfat-utils"
+	"exfatprogs"
+	"eza"
 	"f2fs-tools"
+	"fatresize"
+	"foot-terminfo"
 	"fsarchiver"
+	"gcc-libs"
+	"git"
+	"gpart"
+	"gpm"
+	"gptfdisk"
+	"grml-zsh-config"
+	"grub"
+	"gsimplecal"
 	"hdparm"
-	"iputils"
+	"htop"
+	"hyperv"
+	"i3-wm"
+	"i3status-rust"
+	"intel-ucode"
+	"iotop"
+	"irssi"
+	"iw"
+	"iwd"
+	"jfsutils"
+	"kitty-terminfo"
+	"kitty"
+	"ldns"
+	"less"
 	"lftp"
-	"linux-firmware"
+	"libfido2"
+	"libnotify"
+	"libusb-compat"
+	"linux-atm"
 	"linux-firmware-marvell"
+	"linux-firmware"
+	"linux"
+	"livecd-sounds"
 	"lm_sensors"
-	"lsb-release"
 	"lsscsi"
+	"lvm2"
+	"lynx"
 	"man-db"
 	"man-pages"
+	"mc"
 	"mdadm"
+	"memtest86+-efi"
+	"memtest86+"
+	"mkinitcpio-archiso"
+	"mkinitcpio-nfs-utils"
+	"mkinitcpio"
+	"modemmanager"
+	"most"
 	"mtools"
+	"nano"
+	"nbd"
+	"ndisc6"
+	"net-tools"
+	"networkmanager"
 	"nfs-utils"
 	"nilfs-utils"
-	"ntp"
+	"nitrogen"
+	"nmap"
+	"ntfs-3g"
+	"nvme-cli"
+	"oh-my-zsh-git"
+	"open-iscsi"
+	"open-vm-tools"
 	"openconnect"
+	"openpgp-card-tools"
 	"openssh"
 	"openvpn"
-	"p7zip"
 	"pacman-contrib"
+	"pamixer"
 	"partclone"
 	"parted"
 	"partimage"
+	"paru"
+	"pavucontrol"
+	"pcsclite"
 	"ppp"
 	"pptpclient"
+	"pulseaudio"
+	"pv"
+	"python-pip"
+	"python-setuptools"
+	"qemu-guest-agent"
+	"ranger"
+	"refind"
 	"reflector"
+	"rofi"
 	"rp-pppoe"
+	"rsync"
+	"rubygems"
+	"rxvt-unicode-terminfo"
+	"screen"
 	"sdparm"
+	"sequoia-sq"
 	"sg3_utils"
+	"smartmontools"
 	"sof-firmware"
+	"squashfs-tools"
+	"sudo"
+	"sxhkd"
+	"syslinux"
+	"systemd-resolvconf"
 	"tcpdump"
 	"terminus-font"
 	"testdisk"
-	"ttf-dejavu"
+	"tmux"
+	"tpm2-tools"
+	"tpm2-tss"
+	"udftools"
 	"usb_modeswitch"
+	"usbmuxd"
 	"usbutils"
-	"vi"
-	"wireless-regdb"
+	"vim"
+	"virtualbox-guest-utils-nox"
+	"vpnc"
 	"wireless_tools"
+	"wireless-regdb"
 	"wpa_supplicant"
 	"wvdial"
+	"xfsprogs"
+	"xl2tpd"
+	"xorg-server"
+	"xorg-xinit"
+	"xterm"
+	"zsh"
 ) # }
 
 # packages installed for each wm/de {
@@ -1735,6 +1856,7 @@ install_main() {
 	genfstab -U "$MNT" >"$MNT/etc/fstab" 2>"$ERR"
 	errshow 1 "genfstab -U '$MNT' > '$MNT/etc/fstab'"
 	[[ -f $MNT/swapfile ]] && sed -i "s~${MNT}~~" "$MNT/etc/fstab"
+	install_cachyos_repos
 	install_packages
 	install_tearfree
 	install_mkinitcpio
@@ -1803,25 +1925,26 @@ install_base() {
 		unset BG_PID
 	fi
 
-	install_check_base
-
 	mkdir -pv "$MNT/etc/default"
 
 	if [[ $DIST == "Syncopated" ]]; then
 		# we have some customizations in /etc on the iso we want to preserve
-		# cp -vf /etc/os-release "$MNT/etc/"
-		# cp -vf /etc/lsb-release "$MNT/etc/"
-		# cp -vf /etc/modprobe.d "$MNT/etc/"
-		# cp -vf /etc/skel/.zshrc "$MNT/etc/skel/.zshrc"
-		# cp -vf /etc/skel/.zshenv "$MNT/etc/skel/.zshenv"
-		# cp -vf /etc/skel/.zprofile "$MNT/etc/skel/.zprofile"
-		# cp -vf /etc/skel/.Xresources "$MNT/etc/skel/.Xresources"
-		# cp -vf /etc/skel/.xprofile "$MNT/etc/skel/.xprofile"
+		cp -vf /etc/os-release "$MNT/etc/"
+		cp -vf /etc/lsb-release "$MNT/etc/"
+		cp -vf /etc/modprobe.d "$MNT/etc/"
+		cp -vf /etc/skel/.zshrc "$MNT/etc/skel/.zshrc"
+		cp -vf /etc/skel/.zshenv "$MNT/etc/skel/.zshenv"
+		cp -vf /etc/skel/.zprofile "$MNT/etc/skel/.zprofile"
+		cp -vf /etc/skel/.Xresources "$MNT/etc/skel/.Xresources"
+		cp -vf /etc/skel/.xprofile "$MNT/etc/skel/.xprofile"
+		cp -vf /etc/skel/.xinitrc "$MNT/etc/skel/.xinitrc"
 		# cp -vf /etc/skel/.gtkrc-2.0 "$MNT/etc/skel/.gtkrc-2.0"
-		# cp -rfv /etc/skel/.config "$MNT/etc/skel/"
+		cp -rfv /etc/skel/.config "$MNT/etc/skel/"
+		cp -rfv /etc/skel/.local "$MNT/etc/skel/"
 		mkdir -p "$MNT/usr/share/themes/"
 		cp -rfv /usr/share/themes/oomox-soundbot "$MNT/usr/share/themes/"
-		zshrc
+		mkdir -p "$MNT/usr/share/backgrounds/"
+		cp -rfv /usr/share/backgrounds/syncopated "$MNT/usr/share/backgrounds/"
 	else
 		zshrc
 	fi
@@ -2168,6 +2291,8 @@ install_check_bg() {
 	[[ $LUKS ]] && luks='cryptsetup'
 
 	{
+		pacman-key --init
+		pacman-key --populate
 		pacman -Syy
 		pacman -S archlinux-keyring --noconfirm
 		pacstrap /mnt base rsync
@@ -2176,15 +2301,24 @@ install_check_bg() {
 	cp -Rf /etc/pacman.d "$MNT/etc/"
 	cp -f /etc/pacman.conf "$MNT/etc/"
 	cp -f /etc/pacman.d/mirrorlist "$MNT/etc/pacman.d/"
-	al_repo "$MNT/etc/pacman.conf"
+	cp -f /etc/pacman.d/chaotic-mirrorlist "$MNT/etc/pacman.d/"
+
 	{
+		chrun "pacman-key --init"
+		chrun "pacman-key --populate"
+		chrun "pacman -Sy --needed archlinux-keyring --noconfirm"
+		chrun "pacman -Su"
+
 		if pacman-key --list-keys | grep -q "expired.*Chaotic" || ! pacman-key --list-keys | grep -q "$key"; then
-			chrun "pacman-key --recv-keys '$key'"
-			chrun "pacman-key --finger '$key'"
-			chrun "pacman-key --lsign-key '$key'"
+			chrun "pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com"
+			chrun "pacman-key --lsign-key 3056513887B78AEB"
+			chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm"
+			chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm"
+			chrun "pacman -Syu"
 		fi
-		chrun "pacman -Syyu --noconfirm"
-		chrun "pacman -S archlinux-keyring chaotic-keyring --noconfirm"
+
+		install_cachyos_repos
+
 		chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
 	} >>/tmp/bgout 2>&1
@@ -2293,9 +2427,9 @@ install_mirrorlist() {
 	[[ -f /etc/pacman.d/mirrorlist.bak ]] || cp -f /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 	if [[ $AUTO_MIRROR ]]; then
-		reflector "${args[@]}" -l 250 -a 24 --score 100 --sort rate -f 5 --save /etc/pacman.d/mirrorlist
+		reflector "${args[@]}" --download-timeout 2 --protocol https --sort rate --score 15 --fastest 20 --save /etc/pacman.d/mirrorlist
 	else
-		reflector "${args[@]}" -c "$MIRROR_COUNTRY" -l 150 -a 24 --score 75 --sort rate -f 5 --save /etc/pacman.d/mirrorlist
+		reflector "${args[@]}" -c "$MIRROR_COUNTRY" --download-timeout 2 --protocol https --sort rate --score 15 --fastest 20 --save /etc/pacman.d/mirrorlist
 	fi
 
 	chmod +r /etc/pacman.d/mirrorlist
@@ -2310,6 +2444,8 @@ install_background() {
 	(
 		install_mirrorlist >/tmp/bgout 2>&1
 		{
+			pacman-key --init
+			pacman-key --populate
 			pacman -Syy
 			pacman -S archlinux-keyring --noconfirm
 			pacstrap /mnt base rsync
@@ -2318,15 +2454,24 @@ install_background() {
 		cp -Rf /etc/pacman.d "$MNT/etc/"
 		cp -f /etc/pacman.conf "$MNT/etc/"
 		cp -f /etc/pacman.d/mirrorlist "$MNT/etc/pacman.d/"
+		cp -f /etc/pacman.d/chaotic-mirrorlist "$MNT/etc/pacman.d/"
 
 		{
-			chrun "pacman -Syyu --noconfirm"
+			chrun "pacman-key --init"
+			chrun "pacman-key --populate"
+			chrun "pacman -Sy --needed archlinux-keyring --noconfirm"
+			chrun "pacman -Su"
+
 			if pacman-key --list-keys | grep -q "expired.*Chaotic" || ! pacman-key --list-keys | grep -q "$key"; then
-				chrun "pacman-key --recv-keys '$key'"
-				chrun "pacman-key --finger '$key'"
-				chrun "pacman-key --lsign-key '$key'"
+				chrun "pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com"
+				chrun "pacman-key --lsign-key 3056513887B78AEB"
+				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm"
+				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm"
+				chrun "pacman -Syu"
 			fi
-			chrun "pacman -S archlinux-keyring chaotic-keyring --noconfirm"
+
+			install_cachyos_repos
+
 			chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
 		} >>/tmp/bgout 2>&1
@@ -2399,7 +2544,7 @@ config_lightdm() {
 		cat >"$MNT/etc/lightdm/lightdm-gtk-greeter.conf" <<-EOF
 			[greeter]
 			# default-user-image=/usr/share/icons/ArchLabs-Dark/64x64/places/distributor-logo-archlabs.png
-			# background=/usr/share/backgrounds/archlabs/archlabs.jpg
+			background=/usr/share/backgrounds/syncopated/syncopated003.jpg
 			theme-name=Adwaita-dark
 			icon-theme-name=Adwaita
 			font-name=DejaVu Sans Mono 11
@@ -3610,6 +3755,22 @@ system_identify() {
 	else
 		NET_TYPE=iwd
 	fi
+}
+
+install_cachyos_repos() {
+	msg "Install CachyOS Repositories" "\nInstalling CachyOS repositories for performance-optimized packages.\n" 0
+	chrun "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz" 2>"$ERR" 2>&1
+	errshow 0 "chrun 'curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz'"
+
+	chrun "tar xvf cachyos-repo.tar.xz && cd cachyos-repo" 2>"$ERR" 2>&1
+	errshow 0 "chrun 'tar xvf cachyos-repo.tar.xz && cd cachyos-repo'"
+
+	chrun "./cachyos-repo.sh" 2>"$ERR" 2>&1
+	errshow 0 "chrun './cachyos-repo.sh'"
+
+	chrun "pacman -Syu --needed --noconfirm"
+
+	msg "CachyOS Repositories" "\nCachyOS repositories have been successfully installed.\n" 2
 }
 
 ###############################################################################

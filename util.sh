@@ -8,4 +8,4 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-export INSTALLER_GIT='https://raw.githubusercontent.com/SyncopatedLinux/iso/main/airootfs/usr/local/bin/installer'
+export INSTALLER_GIT='https://gitlab.com/syncopatedX/archlabs-iso/-/snippets/4832207'

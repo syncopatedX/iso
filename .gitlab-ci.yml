@@ -1,0 +1,250 @@
+# GitLab CI/CD configuration for building Syncopated OS ISO
+
+default:
+  image: "archlinux:latest" # Use the official Arch Linux base image
+
+stages:
+  # - lint # Code quality checks
+  - build # Build the ISO image
+  # - test # Test the built ISO
+  # - publish # Publish artifacts (optional)
+  - cleanup # Clean up old artifacts/packages (optional)
+  # - report      # Reporting (e.g., issue bot on failure) - commented out
+
+variables:
+  ISO_NAME: "syncopated" # Default ISO name from profiledef.sh
+  # Define BUILD_VERSION using GitLab CI predefined variables for uniqueness
+  BUILD_VERSION: ${CI_PIPELINE_IID}
+
+# ---------------- Lint Stage ----------------
+
+# shellcheck:
+#   stage: lint
+#   before_script:
+#     - pacman -Syu --needed --noconfirm shellcheck
+#   script:
+#     - echo "🔍 Running shellcheck..."
+#     - shopt -s globstar # Enable recursive globbing
+#     - shellcheck **/*.sh
+
+# shfmt:
+#   stage: lint
+#   before_script:
+#     - pacman -Syu --needed --noconfirm shfmt
+#   script:
+#     - echo "💅 Running shfmt..."
+#     - shopt -s globstar
+#     - shfmt -i 2 -ci -d **/*.sh # Check formatting, indent 2, check in-place, list different files
+
+# yamllint:
+#   stage: lint
+#   image: python:3.9-slim # Use a python image for yamllint
+#   before_script:
+#     - pip install yamllint
+#   script:
+#     - echo "🧐 Running yamllint..."
+#     - yamllint . # Lint all YAML files in the repository root
+
+# ---------------- Build Stage ----------------
+
+build_iso:
+  stage: build
+  # tags:
+  #   - docker # Use docker executor - ensure it has necessary privileges if needed
+  #   # - vm   # Or use a VM executor if direct hardware access/privileges are required
+  before_script:
+    # Install necessary dependencies for building the ISO using mkarchiso and potentially the build script
+    - pacman -Syu --needed --noconfirm archiso squashfs-tools libisoburn dosfstools grub efibootmgr git sudo curl tar
+    - pacman-key --init
+    - pacman-key --populate
+    - pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+    - pacman-key --lsign-key 3056513887B78AEB
+    - pacman -U --needed --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+    - pacman -U --needed --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+    - pacman -Syu --needed --noconfirm
+    # - curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /tmp/cachyos-repo.tar.xz
+    # - cd /tmp && tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+    # - yes | ./cachyos-repo.sh
+    # - pacman -Syuu --needed --noconfirm
+    # Add any other dependencies required by mkarchiso or the build.sh script
+    # Add sudoers entry if needed by the build script (runner user might need passwordless sudo)
+    # - echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel_nopasswd
+  script:
+    - echo "🛠️ Building ISO using build.sh script..."
+    # Run the build script located in the root directory
+    # Pass the BUILD_VERSION as an argument (adjust if script expects different parameters)
+    - ./build
+    # ---
+    # Capture build information and metrics
+    - echo "BUILD_VERSION=${BUILD_VERSION}" > build.env
+    # Find the exact ISO filename (might include date or kernel type like -lts)
+    # Assuming build.sh places the ISO in 'out/' directory similar to mkarchiso default
+    - export ISO_FULL_FILENAME=$(basename out/${ISO_NAME}*.iso)
+    - echo "ISO_FILENAME=${ISO_FULL_FILENAME}" >> build.env
+    - export ISO_SIZE_MB=$(du -m "out/${ISO_FULL_FILENAME}" | cut -f1)
+    - echo "ISO_SIZE_MB=${ISO_SIZE_MB}" >> build.env
+  artifacts:
+    name: "${CI_PROJECT_NAME}-ISO-${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_IID}"
+    paths:
+      - "out/*.iso" # The final ISO image
+      - "work/" # Include work directory for debugging build failures
+      - build.env # Pass build variables to subsequent stages
+    expire_in: 1 week # Adjust artifact expiry as needed
+    reports:
+      dotenv: build.env # Make build variables available to downstream jobs
+      metrics: metrics.txt # Report the ISO size as a metric
+
+# ---------------- Test Stage ----------------
+
+# Simple QEMU Boot Test (UEFI)
+# test_qemu_boot_uefi:
+#   stage: test
+#   # tags:
+#   #   - docker # Needs KVM capability potentially (check runner config), or uses TCG (slower)
+#   #   # - vm
+#   needs:
+#     - job: build_iso # Ensure build job completes first
+#       artifacts: true # Download artifacts from build job
+#   before_script:
+#     - pacman -Syu --needed --noconfirm qemu-system-x86_64 edk2-ovmf expect
+#   script:
+#     - echo "Testing UEFI boot for ISO ${ISO_FILENAME}"
+#     - ISO_FILE="out/${ISO_FILENAME}"
+
+#     # OVMF requires a non-volatile variable store copy
+#     - cp /usr/share/edk2/x64/OVMF_VARS.4m.fd OVMF_VARS.4m.fd
+
+#     # Use 'expect' to automate interaction with QEMU's serial console output
+#     # This checks if a login prompt appears within 120 seconds.
+#     - |
+#       timeout 120s expect <<EOF
+#       set timeout 120
+#       spawn qemu-system-x86_64 \
+#         -m 1024 \
+#         -enable-kvm \
+#         -cpu host \
+#         -cdrom $ISO_FILE \
+#         -drive if=pflash,format=raw,unit=0,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd,readonly=on \
+#         -drive if=pflash,format=raw,unit=1,file=OVMF_VARS.4m.fd \
+#         -nographic \
+#         -serial stdio \
+#         -display none
+
+#       # Expect either a login prompt or the specific archiso root prompt
+#       expect {
+#         "login:" { send_user "\n✅ Boot successful (login prompt found)\n"; exit 0 }
+#         "archiso" { send_user "\n✅ Boot successful (archiso prompt found)\n"; exit 0 }
+#         timeout { send_user "\n❌ Timeout waiting for boot prompt after 120s\n"; exit 1 }
+#         eof { send_user "\n❌ QEMU exited unexpectedly\n"; exit 1 }
+#       }
+#       EOF
+
+# ---------------- Publish Stage ----------------
+
+# publish_iso_package:
+#   stage: publish
+#   # tags:
+#   #   - docker
+#   #   # - secure # Use a secure runner if dealing with sensitive tokens/keys
+#   needs:
+#     # Ensure dependent jobs completed successfully
+#     - job: build_iso
+#       artifacts: true
+#     - job: test_qemu_boot_uefi
+#       # Add other test jobs here if they exist
+#   rules:
+#     # Example rules: Publish only for tags or commits on the main branch
+#     - if: "$CI_COMMIT_TAG"
+#     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+#     # Example rule: Publish only for specific scheduled pipelines
+#     # - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULED_PUBLISH == "TRUE"
+#   before_script:
+#     - pacman -Syu --needed --noconfirm curl
+#     # Install GPG if signing is needed
+#     # - pacman -Syu --needed --noconfirm gnupg
+#   script:
+#     - echo "📦 Publishing ISO ${ISO_FILENAME}"
+#     - ISO_FILE="out/${ISO_FILENAME}"
+#     # Determine package version: use Git tag if available, otherwise use build version (pipeline IID)
+#     - 'PACKAGE_VERSION="${CI_COMMIT_TAG:-${BUILD_VERSION}}"'
+#     - 'echo "Publishing version: ${PACKAGE_VERSION}"'
+
+# --- GPG Signing (Optional) ---
+# Uncomment and configure if GPG signing is required
+# - echo "🔑 Importing GPG key..."
+# - gpg --import --batch <(echo "${GPG_PRIVATE_KEY}") # Requires GPG_PRIVATE_KEY CI/CD variable
+# - echo "✍️ Signing ISO..."
+# - gpg --detach-sign --armor "${ISO_FILE}"
+# - ISO_SIG_FILE="${ISO_FILE}.asc"
+# - echo "🔑 Signature file: ${ISO_SIG_FILE}"
+# ---
+
+# Upload ISO to GitLab Generic Package Registry
+# - echo "⬆️ Uploading ISO to GitLab Package Registry..."
+# - |
+#   curl --fail --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${ISO_FILE}" \
+#     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}/$(basename ${ISO_FILE})"
+
+# --- Upload Signature (Optional) ---
+# Uncomment if GPG signing is enabled
+# - echo "⬆️ Uploading Signature to GitLab Package Registry..."
+# - |
+#   curl --fail --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${ISO_SIG_FILE}" \
+#     "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/${PACKAGE_VERSION}/$(basename ${ISO_SIG_FILE})"
+# ---
+
+# Add other publishing steps here (e.g., upload to mirrors, website)
+
+# ---------------- Cleanup Stage ----------------
+
+cleanup_old_packages:
+  stage: cleanup
+  # tags:
+  #   - docker
+  #   # - secure # If using GITLAB_PROJECT_TOKEN
+  needs: [] # Run independently
+  rules:
+    # Example: Run cleanup only on scheduled pipelines with a specific variable set
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $CLEANUP_PACKAGE_REGISTRY == "TRUE"
+  before_script:
+    - pacman -Syu --noconfirm --needed jq curl
+  script:
+    - echo "🧹 Cleaning up old packages from GitLab Package Registry..."
+    # Requires a Project Access Token (with api scope) stored in CI/CD variable GITLAB_PROJECT_TOKEN
+    # This example deletes generic packages older than 90 days. Adjust the logic as needed.
+    - |
+      PACKAGE_API_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages?package_name=${CI_PROJECT_NAME}&package_type=generic&per_page=100&order_by=created_at&sort=asc"
+      echo "Fetching packages from ${PACKAGE_API_URL}"
+      # Calculate cutoff date (90 days ago)
+      CUTOFF_DATE=$(date -d "90 days ago" -Iseconds)
+      echo "Cutoff date for deletion: ${CUTOFF_DATE}"
+
+      # Fetch package IDs older than the cutoff date
+      PACKAGE_IDS=$(curl --silent --fail --show-error --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${PACKAGE_API_URL}" | jq --arg cutoff "$CUTOFF_DATE" '.[] | select(.created_at < $cutoff) | .id')
+
+      if [ -z "$PACKAGE_IDS" ]; then
+        echo "No packages older than 90 days found to delete."
+      else
+        for id in $PACKAGE_IDS; do
+          echo "Deleting package ID: ${id}"
+          DELETE_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${id}"
+          curl --silent --fail --show-error --request DELETE --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${DELETE_URL}"
+          # Add a small delay to avoid hitting rate limits if deleting many packages
+          sleep 1
+        done
+        echo "Cleanup complete."
+      fi
+
+# ---------------- Report Stage (Optional) ----------------
+
+# report_failure:
+#   stage: report
+#   tags:
+#     - docker
+#     # - secure
+#   image: registry.gitlab.com/gitlab-org/distribution/issue-bot:latest # Official issue bot image
+#   script: /issue-bot # Default script path in the image
+#   rules:
+#     # Example: Run only on failure on the default branch
+#     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+#       when: on_failure

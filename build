@@ -21,25 +21,45 @@ cat >>packages.x86_64 <<-EOF
 	alsa-firmware
 	alsa-lib
 	alsa-plugins
+	aria2
+	b43-firmware
 	base-devel
+	bash
+	cargo
 	chaotic-keyring
 	chaotic-mirrorlist
-	b43-firmware
+	curl
 	dialog
+	dmenu
 	dunst
-	libnotify
+	eza
+	gcc-libs
+	git
 	gsimplecal
-	lm_sensors
+	htop
 	i3-wm
+	i3status-rust
+	iotop
+	kitty
+	libnotify
+	lm_sensors
+	most
 	net-tools
 	networkmanager
 	nitrogen
+	oh-my-zsh-git
 	pacman-contrib
 	pamixer
+	paru
 	pavucontrol
 	pulseaudio
+	python-pip
+	python-setuptools
+	ranger
 	rofi
+	rubygems
 	sxhkd
+	wireless-regdb
 	xorg-server
 	xorg-xinit
 	xterm
@@ -52,7 +72,6 @@ while getopts ":huLtl:" OPT; do
 		echo "Usage: ${0##*/} [-hutL]"
 		echo
 		echo "    -h           Print this message and exit"
-		echo "    -t           Enable testing repos"
 		echo "    -L           Use the LTS kernel instead of vanilla"
 		echo "    -u           Remotely update the installer"
 		echo "    -l <PATH>    Locally update the installer"
@@ -86,7 +105,7 @@ while getopts ":huLtl:" OPT; do
 		sed -i 's/-linux/-linux-lts/g' syslinux/*.cfg
 		sed -i 's/-linux/-linux-lts/g' grub/grub.cfg
 		sed -i 's/-linux/-linux-lts/g' airootfs/etc/mkinitcpio.d/linux.preset
-		sed -i 's/"archlabs"/"archlabs-lts"/g' profiledef.sh
+		sed -i 's/"syncopated"/"syncopated-lts"/g' profiledef.sh
 
 		lts=true
 		;;
@@ -106,6 +125,13 @@ shift $((OPTIND - 1))
 [[ -e airootfs/etc/os-release ]] && sed -i "s/\(VERSION_ID\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/os-release
 [[ -e airootfs/etc/lsb-release ]] && sed -i "s/\(DISTRIB_RELEASE\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/lsb-release
 
+if [ ! -d "/home/repository" ]; then
+	cp -r ./repository /home/
+else
+	rm -rf ./home/repository
+	cp -r ./repository /home/
+fi
+
 # build it
 mkarchiso -v .
 
@@ -119,7 +145,7 @@ if [[ $lts == 'true' ]]; then
 	sed -i 's/-linux-lts/-linux/g' efiboot/loader/entries/*
 	sed -i 's/-linux-lts/-linux/g' syslinux/*.cfg
 	sed -i 's/-linux-lts/-linux/g' grub/grub.cfg
-	sed -i 's/archlabs-lts/archlabs/g' profiledef.sh
+	sed -i 's/syncopated-lts/syncopated/g' profiledef.sh
 fi
 
 end=$(date +%s)

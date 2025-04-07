@@ -105,7 +105,7 @@ bindsym XF86Forward workspace next
 ###############################################################
 
 # bindsym XF86RotateWindows '[class="URxvt" title="scriber.rb"]' focus
-bindsym XF86RotateWindows $exec /mnt/bender/backup/weather.sh
+# bindsym XF86RotateWindows $exec /mnt/bender/backup/weather.sh
 
 bindsym XF86AudioRecord $exec kitty --class "notepad" --hold -e ~/.local/bin/whisper-stream -df
 

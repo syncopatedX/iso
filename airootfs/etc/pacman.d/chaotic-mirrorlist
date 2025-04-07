@@ -31,6 +31,10 @@ Server = https://de-3-mirror.chaotic.cx/$repo/$arch
 # * By: redgloboli
 Server = https://de-4-mirror.chaotic.cx/$repo/$arch
 
+# France
+# * By Yael (Marseille)
+Server = https://fr-mirror.chaotic.cx/$repo/$arch
+
 # Greece
 # * By: vmmaniac <github.com/vmmaniac>
 Server = https://gr-mirror.chaotic.cx/$repo/$arch
@@ -42,6 +46,8 @@ Server = https://in-mirror.chaotic.cx/$repo/$arch
 Server = https://in-2-mirror.chaotic.cx/$repo/$arch
 # * By: BRAVO68DEV <https://www.itsmebravo.dev/>
 Server = https://in-3-mirror.chaotic.cx/$repo/$arch
+# * By Albony (Chennai)
+Server = https://in-4-mirror.chaotic.cx/$repo/$arch
 
 # Korea
 # * By: <t.me/silent_heigou> (Seoul)
@@ -62,8 +68,3 @@ Server = https://us-tx-mirror.chaotic.cx/$repo/$arch
 # Utah
 # * By: ash <t.me/the_ashh>
 Server = https://us-ut-mirror.chaotic.cx/$repo/$arch
-
-
-# IPFS mirror - for instructions on how to use it consult the projects repo (https://github.com/RubenKelevra/pacman.store)
-# * By: RubenKelevra / pacman.store
-# Server = http://chaotic-aur.pkg.pacman.store.ipns.localhost:8080/$arch

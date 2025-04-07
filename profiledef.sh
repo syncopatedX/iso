@@ -28,6 +28,7 @@ file_permissions=(
   ["/root/.config/rofi/scripts/launcher_main.sh"]="0:0:755"
   ["/root/.config/rofi/scripts/launcher_t1.sh"]="0:0:755"
   ["/root/.config/rofi/scripts/launcher_t4.sh"]="0:0:755"
+  ["/etc/skel/.local/bin/reload-sxhkd.sh"]="0:0:755"
   ["/etc/skel/.config/rofi/scripts/launcher_main.sh"]="0:0:755"
   ["/etc/skel/.config/rofi/scripts/launcher_t1.sh"]="0:0:755"
   ["/etc/skel/.config/rofi/scripts/launcher_t4.sh"]="0:0:755"
@@ -38,5 +39,4 @@ file_permissions=(
   ["/usr/local/bin/livecd-sound"]="0:0:755"
   ["/usr/local/bin/installer"]="0:0:755"
   ["/usr/local/bin/bootstrap.sh"]="0:0:755"
-  ["/usr/local/bin/reload-sxhkd.sh"]="0:0:755"
 )

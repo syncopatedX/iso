@@ -108,6 +108,7 @@ typeset -a BASE_PKGS=(
 	"xorg-xwayland"
 	"xorg"
 	"yadm"
+	"zoxide"
 ) # }
 
 # general packages for window managers to provide some basic functionality {
@@ -130,7 +131,6 @@ typeset -a WM_PKGS=(
 	"gedit"
 	"geoclue"
 	"gitui"
-	"gnu-free-fonts"
 	"gnu-free-fonts"
 	"google-chrome"
 	"gpick"
@@ -164,7 +164,6 @@ typeset -a WM_PKGS=(
 	"rtmidi"
 	"scrot"
 	"seahorse"
-	"shotcut"
 	"sxiv"
 	"texlive-fontsextra"
 	"texlive-fontsrecommended"
@@ -179,7 +178,6 @@ typeset -a WM_PKGS=(
 	"ttf-jetbrains-mono"
 	"ttf-liberation"
 	"ttf-opensans"
-	"ttf-ubuntu-font-family"
 	"ttf-ubuntu-font-family"
 	"tuned"
 	"vlc"
@@ -1941,8 +1939,11 @@ install_base() {
 		cp -vf /etc/skel/.xinitrc "$MNT/etc/skel/.xinitrc"
 		# cp -vf /etc/skel/.gtkrc-2.0 "$MNT/etc/skel/.gtkrc-2.0"
 		cp -rfv /etc/skel/.config "$MNT/etc/skel/"
+		cp -rfv /etc/skel/.local "$MNT/etc/skel/"
 		mkdir -p "$MNT/usr/share/themes/"
 		cp -rfv /usr/share/themes/oomox-soundbot "$MNT/usr/share/themes/"
+		mkdir -p "$MNT/usr/share/backgrounds/"
+		cp -rfv /usr/share/backgrounds/syncopated "$MNT/usr/share/backgrounds/"
 	else
 		zshrc
 	fi
@@ -2326,7 +2327,7 @@ install_check_bg() {
 	fi
 
 	if [[ -e /tmp/wmlist ]]; then
-		chrun "/usr/bin/paru -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
+		chrun "pacman -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
 	fi
 }
 
@@ -2477,7 +2478,7 @@ install_background() {
 		fi
 
 		[[ -e /tmp/wmlist ]] &&
-			chrun "/usr/bin/paru -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
+			chrun "pacman -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
 	) &
 
 	BG_PID=$!
@@ -2538,7 +2539,7 @@ config_lightdm() {
 		cat >"$MNT/etc/lightdm/lightdm-gtk-greeter.conf" <<-EOF
 			[greeter]
 			# default-user-image=/usr/share/icons/ArchLabs-Dark/64x64/places/distributor-logo-archlabs.png
-			# background=/usr/share/backgrounds/archlabs/archlabs.jpg
+			background=/usr/share/backgrounds/syncopated/syncopated003.jpg
 			theme-name=Adwaita-dark
 			icon-theme-name=Adwaita
 			font-name=DejaVu Sans Mono 11

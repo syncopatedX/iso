@@ -18,4 +18,4 @@ nitrogen --restore &
 xset dpms 600 900 1200
 xset r rate 350 60
 
-exec dk
+exec i3

@@ -1,0 +1,105 @@
+[theme]
+theme = "syncopated"
+[theme.overrides]
+separator_bg = "#000000"
+separator_fg = "#ebdbb2"
+separator = " ┆ "
+end_separator_bg = "#000000"
+end_separator_fg = "#ebdbb2"
+end_separator = "┆"
+
+[icons]
+icons = "awesome6"
+[icons.overrides]
+weather_clouds = " "
+weather_default = " "        # Cloud symbol as default
+weather_rain = " "
+weather_snow = " "
+weather_sun = " "
+weather_thunder = " "
+cogs = " "
+
+#[[block]]
+#block = "custom"
+#command = "/home/b08x/.local/bin/openai_usage.rb"
+#interval = 300
+
+[[block]]
+block = "menu"
+text = ""
+[[block.items]]
+display = " -&gt;   dots   &lt;-"
+cmd = "kitty --class 'noteinfo' -e dots.sh"
+[[block.items]]
+display = " -&gt;   noteinfo   &lt;-"
+cmd = "kitty --class 'noteinfo' -e noteinfo.rb"
+[[block.items]]
+display = " -&gt; brightness &lt;-"
+cmd = "kitty --class 'brightness' -e brightness.rb"
+#confirm_msg = "Are you sure you want to power off?"
+# [[block.items]]
+# display = " -&gt;  Reboot   &lt;-"
+# cmd = "/usr/bin/uxterm"
+# confirm_msg = "Are you sure you want to reboot?"
+
+
+[[block]]
+block = "sound"
+format = " $icon { $volume|} "
+[[block.click]]
+button = "left"
+cmd = "pavucontrol"
+[[block.click]]
+button = "middle"
+cmd = "terminator --class 'alsamixer' --title 'alsamixer' -e alsamixer -D hw:0"
+
+[[block]]
+block = "load"
+format = " $icon $5m.eng(w:4)  "
+interval = 3
+warning = 0.8
+critical = 2.0
+[[block.click]]
+button = "left"
+cmd = "kitty --class 'govna' -e ~/Utils/bin/set-govna.sh performance"
+[[block.click]]
+button = "right"
+cmd = "kitty --class 'govna' -e ~/Utils/bin/set-govna.sh powersave"
+[[block.click]]
+button = "middle"
+cmd = "terminator --class 'htop' --title 'htop' -e htop"
+
+# [[block]]
+# block = "custom"
+# format = " \uf0c2 "
+# cycle = ["kitty --class 'govna' -e /usr/local/bin/set-govna.sh performance", "kitty --class 'govna' -e /usr/local/bin/# set-govna.sh powersave"]
+# interval = "once"
+# [[block.click]]
+# button = "left"
+# cmd = "<command>"
+
+# [[block]]
+# block = "custom"
+# command = "curl 'https://wttr.in/?format=1' -s | xargs"
+# interval = 300
+# [[block.click]]
+# button = "left"
+# cmd = "kitty --class 'weather' --hold -e wthrr"
+# [[block.click]]
+# button = "right"
+# cmd = "kitty --class 'weather' --hold -e wthrr -f w"
+
+[[block]]
+block = "time"
+interval = 30
+[block.format]
+full = " $icon $timestamp.datetime(f:'%a %Y-%m-%d %I:%M %p', l:en_US) "
+short = " $icon $timestamp.datetime(f:'%I:%M %p') "
+[[block.click]]
+button = "left"
+cmd = "uxterm -hold -e cal -s"
+
+[[block]]
+block = "battery"
+format = " $percentage {$time |} "
+if_command = "test -e /sys/class/power_supply/BAT0"

@@ -26,6 +26,7 @@ cloud-init
 cryptsetup
 curl
 darkhttpd
+dmenu
 ddrescue
 dhcpcd
 dialog

@@ -52,7 +52,6 @@ while getopts ":huLtl:" OPT; do
 		echo "Usage: ${0##*/} [-hutL]"
 		echo
 		echo "    -h           Print this message and exit"
-		echo "    -t           Enable testing repos"
 		echo "    -L           Use the LTS kernel instead of vanilla"
 		echo "    -u           Remotely update the installer"
 		echo "    -l <PATH>    Locally update the installer"
@@ -86,7 +85,7 @@ while getopts ":huLtl:" OPT; do
 		sed -i 's/-linux/-linux-lts/g' syslinux/*.cfg
 		sed -i 's/-linux/-linux-lts/g' grub/grub.cfg
 		sed -i 's/-linux/-linux-lts/g' airootfs/etc/mkinitcpio.d/linux.preset
-		sed -i 's/"archlabs"/"archlabs-lts"/g' profiledef.sh
+		sed -i 's/"syncopated"/"syncopated-lts"/g' profiledef.sh
 
 		lts=true
 		;;
@@ -119,7 +118,7 @@ if [[ $lts == 'true' ]]; then
 	sed -i 's/-linux-lts/-linux/g' efiboot/loader/entries/*
 	sed -i 's/-linux-lts/-linux/g' syslinux/*.cfg
 	sed -i 's/-linux-lts/-linux/g' grub/grub.cfg
-	sed -i 's/archlabs-lts/archlabs/g' profiledef.sh
+	sed -i 's/syncopated-lts/syncopated/g' profiledef.sh
 fi
 
 end=$(date +%s)

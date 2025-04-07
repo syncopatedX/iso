@@ -126,6 +126,7 @@ typeset -a WM_PKGS=(
 	"cbonsai"
 	"dconf"
 	"dunst"
+	"dmenu"
 	"feh"
 	"fontforge"
 	"gedit-markdownpreview-git"

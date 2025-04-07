@@ -7,11 +7,13 @@ amd-ucode
 arch-install-scripts
 archinstall
 archiso
+archlinux-keyring
 aria2
 b43-firmware
 b43-fwcutter
 base
 base-devel
+bash
 bcachefs-tools
 bind
 bolt
@@ -47,6 +49,7 @@ f2fs-tools
 fatresize
 foot-terminfo
 fsarchiver
+gcc-libs
 git
 gpart
 gpm

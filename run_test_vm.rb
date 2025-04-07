@@ -79,21 +79,6 @@ end
 
 prompt = TTY::Prompt.new
 
-# iso_folder = prompt.ask("Folder name where isos are stored:") do |q|
-#   q.required(true)
-#   q.validate ->(v) { return !Dir.exist?(v) }
-#   p q.messages
-#   q.messages[:valid?] = "Folder exists"
-#   q.messages[:required?] = "Folder name must not be empty"
-# end
-#
-# drive_folder = prompt.ask("Folder name where qcow disks are stored:") do |q|
-#   q.required(true)
-#   q.validate ->(v) { return !Dir.exist?(v) }
-#   q.messages[:valid?] = "Folder already exists?"
-#   q.messages[:required?] = "Folder name must not be empty"
-# end
-
 APP_ROOT = File.join(__dir__)
 
 iso_folder = File.join(APP_ROOT, 'out')

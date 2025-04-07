@@ -49,9 +49,9 @@ variables:
 
 build_iso:
   stage: build
-  tags:
-    - docker # Use docker executor - ensure it has necessary privileges if needed
-    # - vm   # Or use a VM executor if direct hardware access/privileges are required
+  # tags:
+  #   - docker # Use docker executor - ensure it has necessary privileges if needed
+  #   # - vm   # Or use a VM executor if direct hardware access/privileges are required
   before_script:
     # Install necessary dependencies for building the ISO using mkarchiso and potentially the build script
     - pacman -Syu --needed --noconfirm archiso squashfs-tools libisoburn dosfstools grub efibootmgr git sudo
@@ -88,9 +88,9 @@ build_iso:
 # Simple QEMU Boot Test (UEFI)
 test_qemu_boot_uefi:
   stage: test
-  tags:
-    - docker # Needs KVM capability potentially (check runner config), or uses TCG (slower)
-    # - vm
+  # tags:
+  #   - docker # Needs KVM capability potentially (check runner config), or uses TCG (slower)
+  #   # - vm
   needs:
     - job: build_iso # Ensure build job completes first
       artifacts: true # Download artifacts from build job
@@ -132,9 +132,9 @@ test_qemu_boot_uefi:
 
 publish_iso_package:
   stage: publish
-  tags:
-    - docker
-    # - secure # Use a secure runner if dealing with sensitive tokens/keys
+  # tags:
+  #   - docker
+  #   # - secure # Use a secure runner if dealing with sensitive tokens/keys
   needs:
     # Ensure dependent jobs completed successfully
     - job: build_iso
@@ -188,9 +188,9 @@ publish_iso_package:
 
 cleanup_old_packages:
   stage: cleanup
-  tags:
-    - docker
-    # - secure # If using GITLAB_PROJECT_TOKEN
+  # tags:
+  #   - docker
+  #   # - secure # If using GITLAB_PROJECT_TOKEN
   needs: [] # Run independently
   rules:
     # Example: Run cleanup only on scheduled pipelines with a specific variable set

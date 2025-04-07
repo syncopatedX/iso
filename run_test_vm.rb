@@ -94,8 +94,10 @@ prompt = TTY::Prompt.new
 #   q.messages[:required?] = "Folder name must not be empty"
 # end
 
-iso_folder = File.join(HOME, 'Workspace', 'Ansible', 'syncopatedOS', 'roles', 'iso', 'files', 'out')
-drive_folder = File.join(HOME, 'Workspace', 'Ansible', 'syncopatedOS', 'roles', 'iso', 'files', 'qcow2')
+APP_ROOT = File.join(__dir__)
+
+iso_folder = File.join(APP_ROOT, 'out')
+drive_folder = File.join(APP_ROOT, 'qcow2')
 
 FileUtils.mkdir_p(drive_folder) unless Dir.exist?(drive_folder)
 
@@ -134,19 +136,17 @@ if create_new_disk
             end
 
   command.execute
-else
+elsif qemu_choice == 'virt-install'
   # Prompt to choose ISO and drive files
-  if qemu_choice == 'virt-install'
-    selected_iso = Shellwords.escape(prompt.select('Select ISO file:', iso_files))
-    selected_drive = Shellwords.escape(prompt.select('Select drive file:', drive_files))
+  selected_iso = Shellwords.escape(prompt.select('Select ISO file:', iso_files))
+  selected_drive = Shellwords.escape(prompt.select('Select drive file:', drive_files))
 
-    command = VirtInstallCommand.new(selected_iso, selected_drive, vcpus, memory)
-    command.execute
-  else
-    selected_iso = Shellwords.escape(prompt.select('Select ISO file:', iso_files))
-    selected_drive = Shellwords.escape(prompt.select('Select drive file:', drive_files))
+  command = VirtInstallCommand.new(selected_iso, selected_drive, vcpus, memory)
+  command.execute
+else
+  selected_iso = Shellwords.escape(prompt.select('Select ISO file:', iso_files))
+  selected_drive = Shellwords.escape(prompt.select('Select drive file:', drive_files))
 
-    command = QemuSystemCommand.new(selected_iso, selected_drive, vcpus, memory)
-    command.execute
-  end
+  command = QemuSystemCommand.new(selected_iso, selected_drive, vcpus, memory)
+  command.execute
 end

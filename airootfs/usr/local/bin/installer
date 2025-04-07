@@ -1856,6 +1856,7 @@ install_main() {
 	genfstab -U "$MNT" >"$MNT/etc/fstab" 2>"$ERR"
 	errshow 1 "genfstab -U '$MNT' > '$MNT/etc/fstab'"
 	[[ -f $MNT/swapfile ]] && sed -i "s~${MNT}~~" "$MNT/etc/fstab"
+	install_cachyos_repos
 	install_packages
 	install_tearfree
 	install_mkinitcpio
@@ -2315,6 +2316,36 @@ install_check_bg() {
 			chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm"
 			chrun "pacman -Syu"
 		fi
+
+		# if pacman-key --list-keys | grep -q "expired.*CachyOS" || ! pacman-key --list-keys | grep -q "F3B607488DB35A47"; then
+		# 	chrun "pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com"
+		# 	chrun "pacman-key --lsign-key F3B607488DB35A47"
+		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' --noconfirm"
+		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' --noconfirm"
+		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' --noconfirm"
+		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-6-1-any.pkg.tar.zst' --noconfirm"
+		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-7.0.0.r6.gc685ae6-3-x86_64.pkg.tar.zst' --noconfirm"
+
+		# 	# Detect CPU features
+		# 	CPU_SUPPORTS_V2=$(/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v2 (supported, searched)" | wc -l)
+		# 	CPU_SUPPORTS_V3=$(/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported, searched)" | wc -l)
+		# 	CPU_SUPPORTS_V4=$(/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v4 (supported, searched)" | wc -l)
+		# 	CPU_SUPPORTS_ZEN=$(/lib/ld-linux-x86-64.so.2 --help | grep "Zen (supported, searched)" | wc -l)
+
+		# 	# Modify pacman.conf based on CPU features
+		# 	if [[ $CPU_SUPPORTS_ZEN -eq 1 ]]; then
+		# 		echo -e "\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist" >>"$MNT/etc/pacman.conf"
+		# 	elif [[ $CPU_SUPPORTS_V4 -eq 1 ]]; then
+		# 		echo -e "\n[cachyos-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n[cachyos-core-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n[cachyos-extra-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist" >>"$MNT/etc/pacman.conf"
+		# 	elif [[ $CPU_SUPPORTS_V3 -eq 1 ]]; then
+		# 		echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist" >>"$MNT/etc/pacman.conf"
+		# 	elif [[ $CPU_SUPPORTS_V2 -eq 1 ]]; then
+		# 		echo -e "\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n[cachyos-core]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n[cachyos-extra]\nInclude = /etc/pacman.d/cachyos-mirrorlist" >>"$MNT/etc/pacman.conf"
+		# 	fi
+
+		# 	chrun "pacman -Syu"
+
+		# fi
 
 		chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
@@ -3750,6 +3781,22 @@ system_identify() {
 	else
 		NET_TYPE=iwd
 	fi
+}
+
+install_cachyos_repos() {
+	msg "Install CachyOS Repositories" "\nInstalling CachyOS repositories for performance-optimized packages.\n" 0
+	chrun "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz" 2>"$ERR" 2>&1
+	errshow 0 "chrun 'curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz'"
+
+	chrun "tar xvf cachyos-repo.tar.xz && cd cachyos-repo" 2>"$ERR" 2>&1
+	errshow 0 "chrun 'tar xvf cachyos-repo.tar.xz && cd cachyos-repo'"
+
+	chrun "./cachyos-repo.sh" 2>"$ERR" 2>&1
+	errshow 0 "chrun './cachyos-repo.sh'"
+
+	chrun "pacman -Syu --needed --noconfirm"
+
+	msg "CachyOS Repositories" "\nCachyOS repositories have been successfully installed.\n" 2
 }
 
 ###############################################################################

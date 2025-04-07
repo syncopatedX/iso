@@ -125,6 +125,13 @@ shift $((OPTIND - 1))
 [[ -e airootfs/etc/os-release ]] && sed -i "s/\(VERSION_ID\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/os-release
 [[ -e airootfs/etc/lsb-release ]] && sed -i "s/\(DISTRIB_RELEASE\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/lsb-release
 
+if [ ! -d "/home/repository" ]; then
+	cp -r ./repository /home/
+else
+	rm -rf ./home/repository
+	cp -r ./repository /home/
+fi
+
 # build it
 mkarchiso -v .
 

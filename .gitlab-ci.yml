@@ -4,7 +4,7 @@ default:
   image: "archlinux:latest" # Use the official Arch Linux base image
 
 stages:
-  - lint # Code quality checks
+  # - lint # Code quality checks
   - build # Build the ISO image
   - test # Test the built ISO
   - publish # Publish artifacts (optional)

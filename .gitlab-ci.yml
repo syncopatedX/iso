@@ -64,7 +64,7 @@ build_iso:
     - pacman -Syu --needed --noconfirm
     - curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /tmp/cachyos-repo.tar.xz
     - cd /tmp && tar xvf cachyos-repo.tar.xz && cd cachyos-repo
-    - ./cachyos-repo.sh
+    - yes | ./cachyos-repo.sh
     - pacman -Syu --needed --noconfirm
     # Add any other dependencies required by mkarchiso or the build.sh script
     # Add sudoers entry if needed by the build script (runner user might need passwordless sudo)

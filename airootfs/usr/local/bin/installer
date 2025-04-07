@@ -2317,35 +2317,7 @@ install_check_bg() {
 			chrun "pacman -Syu"
 		fi
 
-		# if pacman-key --list-keys | grep -q "expired.*CachyOS" || ! pacman-key --list-keys | grep -q "F3B607488DB35A47"; then
-		# 	chrun "pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com"
-		# 	chrun "pacman-key --lsign-key F3B607488DB35A47"
-		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' --noconfirm"
-		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-18-1-any.pkg.tar.zst' --noconfirm"
-		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-18-1-any.pkg.tar.zst' --noconfirm"
-		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-6-1-any.pkg.tar.zst' --noconfirm"
-		# 	chrun "pacman -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-7.0.0.r6.gc685ae6-3-x86_64.pkg.tar.zst' --noconfirm"
-
-		# 	# Detect CPU features
-		# 	CPU_SUPPORTS_V2=$(/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v2 (supported, searched)" | wc -l)
-		# 	CPU_SUPPORTS_V3=$(/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v3 (supported, searched)" | wc -l)
-		# 	CPU_SUPPORTS_V4=$(/lib/ld-linux-x86-64.so.2 --help | grep "x86-64-v4 (supported, searched)" | wc -l)
-		# 	CPU_SUPPORTS_ZEN=$(/lib/ld-linux-x86-64.so.2 --help | grep "Zen (supported, searched)" | wc -l)
-
-		# 	# Modify pacman.conf based on CPU features
-		# 	if [[ $CPU_SUPPORTS_ZEN -eq 1 ]]; then
-		# 		echo -e "\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist" >>"$MNT/etc/pacman.conf"
-		# 	elif [[ $CPU_SUPPORTS_V4 -eq 1 ]]; then
-		# 		echo -e "\n[cachyos-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n[cachyos-core-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n[cachyos-extra-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist" >>"$MNT/etc/pacman.conf"
-		# 	elif [[ $CPU_SUPPORTS_V3 -eq 1 ]]; then
-		# 		echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist" >>"$MNT/etc/pacman.conf"
-		# 	elif [[ $CPU_SUPPORTS_V2 -eq 1 ]]; then
-		# 		echo -e "\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n[cachyos-core]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n[cachyos-extra]\nInclude = /etc/pacman.d/cachyos-mirrorlist" >>"$MNT/etc/pacman.conf"
-		# 	fi
-
-		# 	chrun "pacman -Syu"
-
-		# fi
+		install_cachyos_repos
 
 		chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
@@ -2497,6 +2469,8 @@ install_background() {
 				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm"
 				chrun "pacman -Syu"
 			fi
+
+			install_cachyos_repos
 
 			chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 

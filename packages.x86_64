@@ -15,7 +15,6 @@ cloud-init
 cryptsetup
 darkhttpd
 ddrescue
-dhclient
 dhcpcd
 diffutils
 dmidecode
@@ -73,6 +72,7 @@ nbd
 ndisc6
 nfs-utils
 nilfs-utils
+net-tools
 nmap
 ntfs-3g
 nvme-cli
@@ -131,15 +131,16 @@ acpi
 alsa-firmware
 alsa-lib
 alsa-plugins
-# archlabs-dk
-# archlabs-keyring
-# archlabs-lemonbar
+chaotic-keyring
+chaotic-mirrorlist
 b43-firmware
 dialog
 dunst
 libnotify
 gsimplecal
 lm_sensors
+i3-wm
+net-tools
 networkmanager
 nitrogen
 pacman-contrib

@@ -55,6 +55,7 @@ typeset -a BASE_PKGS=(
 	"bash"
 	"bat"
 	"bc"
+	"curl"
 	"cargo"
 	"ccache"
 	"chaotic-keyring"
@@ -94,7 +95,6 @@ typeset -a BASE_PKGS=(
 	"most"
 	"nodejs"
 	"npm"
-	"paru"
 	"python-pip"
 	"python-setuptools"
 	"rofi"
@@ -153,7 +153,6 @@ typeset -a WM_PKGS=(
 	"maim"
 	"metagedit-git"
 	"micro"
-	"mpv"
 	"mpv"
 	"nitrogen"
 	"nvtop"
@@ -233,6 +232,7 @@ typeset -a ISO_PKGS=(
 	"openconnect"
 	"openssh"
 	"openvpn"
+	"paru"
 	"p7zip"
 	"pacman-contrib"
 	"partclone"
@@ -1807,25 +1807,22 @@ install_base() {
 		unset BG_PID
 	fi
 
-	install_check_base
-
 	mkdir -pv "$MNT/etc/default"
 
 	if [[ $DIST == "Syncopated" ]]; then
 		# we have some customizations in /etc on the iso we want to preserve
-		# cp -vf /etc/os-release "$MNT/etc/"
-		# cp -vf /etc/lsb-release "$MNT/etc/"
-		# cp -vf /etc/modprobe.d "$MNT/etc/"
-		# cp -vf /etc/skel/.zshrc "$MNT/etc/skel/.zshrc"
-		# cp -vf /etc/skel/.zshenv "$MNT/etc/skel/.zshenv"
-		# cp -vf /etc/skel/.zprofile "$MNT/etc/skel/.zprofile"
+		cp -vf /etc/os-release "$MNT/etc/"
+		cp -vf /etc/lsb-release "$MNT/etc/"
+		cp -vf /etc/modprobe.d "$MNT/etc/"
+		cp -vf /etc/skel/.zshrc "$MNT/etc/skel/.zshrc"
+		cp -vf /etc/skel/.zshenv "$MNT/etc/skel/.zshenv"
+		cp -vf /etc/skel/.zprofile "$MNT/etc/skel/.zprofile"
 		# cp -vf /etc/skel/.Xresources "$MNT/etc/skel/.Xresources"
 		# cp -vf /etc/skel/.xprofile "$MNT/etc/skel/.xprofile"
 		# cp -vf /etc/skel/.gtkrc-2.0 "$MNT/etc/skel/.gtkrc-2.0"
-		# cp -rfv /etc/skel/.config "$MNT/etc/skel/"
+		cp -rfv /etc/skel/.config "$MNT/etc/skel/"
 		mkdir -p "$MNT/usr/share/themes/"
 		cp -rfv /usr/share/themes/oomox-soundbot "$MNT/usr/share/themes/"
-		zshrc
 	else
 		zshrc
 	fi
@@ -2172,6 +2169,8 @@ install_check_bg() {
 	[[ $LUKS ]] && luks='cryptsetup'
 
 	{
+		pacman-key --init
+		pacman-key --populate
 		pacman -Syy
 		pacman -S archlinux-keyring --noconfirm
 		pacstrap /mnt base rsync
@@ -2180,15 +2179,22 @@ install_check_bg() {
 	cp -Rf /etc/pacman.d "$MNT/etc/"
 	cp -f /etc/pacman.conf "$MNT/etc/"
 	cp -f /etc/pacman.d/mirrorlist "$MNT/etc/pacman.d/"
-	al_repo "$MNT/etc/pacman.conf"
+	cp -f /etc/pacman.d/chaotic-mirrorlist "$MNT/etc/pacman.d/"
+
 	{
+		chrun "pacman-key --init"
+		chrun "pacman-key --populate"
+		chrun "pacman -Sy --needed archlinux-keyring --noconfirm"
+		chrun "pacman -Su"
+
 		if pacman-key --list-keys | grep -q "expired.*Chaotic" || ! pacman-key --list-keys | grep -q "$key"; then
-			chrun "pacman-key --recv-keys '$key'"
-			chrun "pacman-key --finger '$key'"
-			chrun "pacman-key --lsign-key '$key'"
+			chrun "pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com"
+			chrun "pacman-key --lsign-key 3056513887B78AEB"
+			chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'"
+			chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'"
+			chrun "pacman -Syu"
 		fi
-		chrun "pacman -Syyu --noconfirm"
-		chrun "pacman -S archlinux-keyring chaotic-keyring --noconfirm"
+
 		chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
 	} >>/tmp/bgout 2>&1
@@ -2200,7 +2206,7 @@ install_check_bg() {
 	fi
 
 	if [[ -e /tmp/wmlist ]]; then
-		chrun "pacman -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
+		chrun "/usr/bin/paru -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
 	fi
 }
 
@@ -2314,6 +2320,8 @@ install_background() {
 	(
 		install_mirrorlist >/tmp/bgout 2>&1
 		{
+			pacman-key --init
+			pacman-key --populate
 			pacman -Syy
 			pacman -S archlinux-keyring --noconfirm
 			pacstrap /mnt base rsync
@@ -2322,15 +2330,22 @@ install_background() {
 		cp -Rf /etc/pacman.d "$MNT/etc/"
 		cp -f /etc/pacman.conf "$MNT/etc/"
 		cp -f /etc/pacman.d/mirrorlist "$MNT/etc/pacman.d/"
+		cp -f /etc/pacman.d/chaotic-mirrorlist "$MNT/etc/pacman.d/"
 
 		{
-			chrun "pacman -Syyu --noconfirm"
+			chrun "pacman-key --init"
+			chrun "pacman-key --populate"
+			chrun "pacman -Sy --needed archlinux-keyring --noconfirm"
+			chrun "pacman -Su"
+
 			if pacman-key --list-keys | grep -q "expired.*Chaotic" || ! pacman-key --list-keys | grep -q "$key"; then
-				chrun "pacman-key --recv-keys '$key'"
-				chrun "pacman-key --finger '$key'"
-				chrun "pacman-key --lsign-key '$key'"
+				chrun "pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com"
+				chrun "pacman-key --lsign-key 3056513887B78AEB"
+				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'"
+				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'"
+				chrun "pacman -Syu"
 			fi
-			chrun "pacman -S archlinux-keyring chaotic-keyring --noconfirm"
+
 			chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
 		} >>/tmp/bgout 2>&1
@@ -2342,7 +2357,7 @@ install_background() {
 		fi
 
 		[[ -e /tmp/wmlist ]] &&
-			chrun "pacman -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
+			chrun "/usr/bin/paru -S ${BASE_PKGS[*]} $(cat /tmp/wmlist) --noconfirm --needed" >>/tmp/bgout 2>&1
 	) &
 
 	BG_PID=$!

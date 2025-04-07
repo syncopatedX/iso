@@ -1,4 +1,3 @@
-
 acpi
 alsa-firmware
 alsa-lib
@@ -11,6 +10,7 @@ archiso
 aria2
 b43-firmware
 b43-fwcutter
+base
 base-devel
 bcachefs-tools
 bind
@@ -26,11 +26,11 @@ cloud-init
 cryptsetup
 curl
 darkhttpd
-dmenu
 ddrescue
 dhcpcd
 dialog
 diffutils
+dmenu
 dmidecode
 dmraid
 dnsmasq
@@ -51,6 +51,7 @@ git
 gpart
 gpm
 gptfdisk
+grml-zsh-config
 grub
 gsimplecal
 hdparm

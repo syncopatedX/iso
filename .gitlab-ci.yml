@@ -8,7 +8,7 @@ stages:
   - build # Build the ISO image
   # - test # Test the built ISO
   # - publish # Publish artifacts (optional)
-  - cleanup # Clean up old artifacts/packages (optional)
+  # - cleanup # Clean up old artifacts/packages (optional)
   # - report      # Reporting (e.g., issue bot on failure) - commented out
 
 variables:
@@ -83,6 +83,8 @@ build_iso:
     - echo "ISO_FILENAME=${ISO_FULL_FILENAME}" >> build.env
     - export ISO_SIZE_MB=$(du -m "out/${ISO_FULL_FILENAME}" | cut -f1)
     - echo "ISO_SIZE_MB=${ISO_SIZE_MB}" >> build.env
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "feature/my_feature"'
   artifacts:
     name: "${CI_PROJECT_NAME}-ISO-${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_IID}"
     paths:
@@ -234,7 +236,6 @@ cleanup_old_packages:
         done
         echo "Cleanup complete."
       fi
-
 # ---------------- Report Stage (Optional) ----------------
 
 # report_failure:

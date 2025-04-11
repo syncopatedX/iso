@@ -199,43 +199,43 @@ build_iso:
 
 # ---------------- Cleanup Stage ----------------
 
-cleanup_old_packages:
-  stage: cleanup
-  # tags:
-  #   - docker
-  #   # - secure # If using GITLAB_PROJECT_TOKEN
-  needs: [] # Run independently
-  rules:
-    # Example: Run cleanup only on scheduled pipelines with a specific variable set
-    - if: $CI_PIPELINE_SOURCE == "schedule" && $CLEANUP_PACKAGE_REGISTRY == "TRUE"
-  before_script:
-    - pacman -Syu --noconfirm --needed jq curl
-  script:
-    - echo "🧹 Cleaning up old packages from GitLab Package Registry..."
-    # Requires a Project Access Token (with api scope) stored in CI/CD variable GITLAB_PROJECT_TOKEN
-    # This example deletes generic packages older than 90 days. Adjust the logic as needed.
-    - |
-      PACKAGE_API_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages?package_name=${CI_PROJECT_NAME}&package_type=generic&per_page=100&order_by=created_at&sort=asc"
-      echo "Fetching packages from ${PACKAGE_API_URL}"
-      # Calculate cutoff date (90 days ago)
-      CUTOFF_DATE=$(date -d "90 days ago" -Iseconds)
-      echo "Cutoff date for deletion: ${CUTOFF_DATE}"
+# cleanup_old_packages:
+#   stage: cleanup
+#   # tags:
+#   #   - docker
+#   #   # - secure # If using GITLAB_PROJECT_TOKEN
+#   needs: [] # Run independently
+#   rules:
+#     # Example: Run cleanup only on scheduled pipelines with a specific variable set
+#     - if: $CI_PIPELINE_SOURCE == "schedule" && $CLEANUP_PACKAGE_REGISTRY == "TRUE"
+#   before_script:
+#     - pacman -Syu --noconfirm --needed jq curl
+#   script:
+#     - echo "🧹 Cleaning up old packages from GitLab Package Registry..."
+#     # Requires a Project Access Token (with api scope) stored in CI/CD variable GITLAB_PROJECT_TOKEN
+#     # This example deletes generic packages older than 90 days. Adjust the logic as needed.
+#     - |
+#       PACKAGE_API_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages?package_name=${CI_PROJECT_NAME}&package_type=generic&per_page=100&order_by=created_at&sort=asc"
+#       echo "Fetching packages from ${PACKAGE_API_URL}"
+#       # Calculate cutoff date (90 days ago)
+#       CUTOFF_DATE=$(date -d "90 days ago" -Iseconds)
+#       echo "Cutoff date for deletion: ${CUTOFF_DATE}"
 
-      # Fetch package IDs older than the cutoff date
-      PACKAGE_IDS=$(curl --silent --fail --show-error --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${PACKAGE_API_URL}" | jq --arg cutoff "$CUTOFF_DATE" '.[] | select(.created_at < $cutoff) | .id')
+#       # Fetch package IDs older than the cutoff date
+#       PACKAGE_IDS=$(curl --silent --fail --show-error --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${PACKAGE_API_URL}" | jq --arg cutoff "$CUTOFF_DATE" '.[] | select(.created_at < $cutoff) | .id')
 
-      if [ -z "$PACKAGE_IDS" ]; then
-        echo "No packages older than 90 days found to delete."
-      else
-        for id in $PACKAGE_IDS; do
-          echo "Deleting package ID: ${id}"
-          DELETE_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${id}"
-          curl --silent --fail --show-error --request DELETE --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${DELETE_URL}"
-          # Add a small delay to avoid hitting rate limits if deleting many packages
-          sleep 1
-        done
-        echo "Cleanup complete."
-      fi
+#       if [ -z "$PACKAGE_IDS" ]; then
+#         echo "No packages older than 90 days found to delete."
+#       else
+#         for id in $PACKAGE_IDS; do
+#           echo "Deleting package ID: ${id}"
+#           DELETE_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${id}"
+#           curl --silent --fail --show-error --request DELETE --header "PRIVATE-TOKEN: ${GITLAB_PROJECT_TOKEN}" "${DELETE_URL}"
+#           # Add a small delay to avoid hitting rate limits if deleting many packages
+#           sleep 1
+#         done
+#         echo "Cleanup complete."
+#       fi
 # ---------------- Report Stage (Optional) ----------------
 
 # report_failure:

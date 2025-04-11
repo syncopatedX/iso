@@ -50,6 +50,7 @@ typeset -a BASE_PKGS=(
 	"alsa-plugins"
 	"alsa-tools"
 	"alsa-utils"
+	"ansible"
 	"archiso"
 	"aria2"
 	"bash"

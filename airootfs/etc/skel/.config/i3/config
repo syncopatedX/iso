@@ -114,11 +114,11 @@ $exec_always xrdb -load ~/.Xresources
 $exec "nm-applet"
 $exec "dunst"
 
-# $exec_always nitrogen --restore
+$exec_always nitrogen --restore
 
 $exec "sleep 1; dex -a -s /etc/xdg/autostart/:~/.config/autostart/"
 
 ### placed here as for some reason did not execute in .xprofile
 $exec pactl -- set-sink-volume 0 55%
 
-$exec_always "/usr/local/bin/reload-sxhkd.sh"
+$exec_always "~/.local/bin/reload-sxhkd.sh"

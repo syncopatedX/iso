@@ -724,6 +724,7 @@ select_config() {
 			dlg KERNEL menu "Kernel" "\nChoose which kernel to use." \
 				linux 'Vanilla linux kernel and modules, with a few patches applied' \
 				linux-lts 'Long-term support (LTS) linux kernel and modules' \
+				linux-rt-lts 'Realtime (RT) Long-term support (LTS) linux kernel and modules' \
 				linux-zen 'A effort of kernel hackers to provide the best kernel for everyday systems' \
 				linux-hardened 'A security-focused linux kernel with hardening patches to mitigate exploits' || {
 				i=3
@@ -2242,8 +2243,8 @@ install_packages() {
 
 	# install crucial packages first to avoid issues
 	# reinstalling iputils fixes network issues for non-root users
-	chrun "pacman -Syyu $KERNEL $UCODE iputils --noconfirm" 2>"$ERR" 2>&1
-	errshow 1 "chrun 'pacman -Syyu $KERNEL $UCODE iputils --noconfirm'"
+	chrun "pacman -Syyu $KERNEL ${KERNEL}-headers $UCODE iputils --noconfirm" 2>"$ERR" 2>&1
+	errshow 1 "chrun 'pacman -Syyu $KERNEL ${KERNEL}-headers $UCODE iputils --noconfirm'"
 
 	# install the packages chosen throughout the install plus any extras added
 	# check that packages we're trying to install are available, slow as shit

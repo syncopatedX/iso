@@ -73,6 +73,7 @@ while getopts ":huLtl:" OPT; do
 		echo
 		echo "    -h           Print this message and exit"
 		echo "    -L           Use the LTS kernel instead of vanilla"
+		echo "    -R           Use the Realtime-LTS kernel instead of vanilla"
 		echo "    -u           Remotely update the installer"
 		echo "    -l <PATH>    Locally update the installer"
 		echo
@@ -108,6 +109,20 @@ while getopts ":huLtl:" OPT; do
 		sed -i 's/"syncopated"/"syncopated-lts"/g' profiledef.sh
 
 		lts=true
+		;;
+	R)
+		echo "Enabling Realtime-LTS"
+		sleep 0.5
+		sed -i 's/^broadcom-wl$/broadcom-wl-dkms/g' packages.x86_64
+		sed -i '/^linux$/ a linux-rt-lts-headers' packages.x86_64
+		sed -i 's/^linux$/linux-rt-lts/g' packages.x86_64
+		sed -i 's/-linux/-linux-rt-lts/g' efiboot/loader/entries/*
+		sed -i 's/-linux/-linux-rt-lts/g' syslinux/*.cfg
+		sed -i 's/-linux/-linux-rt-lts/g' grub/grub.cfg
+		sed -i 's/-linux/-linux-rt-lts/g' airootfs/etc/mkinitcpio.d/linux.preset
+		sed -i 's/"syncopated"/"syncopated-rt-lts"/g' profiledef.sh
+
+		rt=true
 		;;
 	:)
 		echo "${0##*/}: error: -$OPTARG requires an argument: <PATH_TO_INSTALLER>"
@@ -146,6 +161,16 @@ if [[ $lts == 'true' ]]; then
 	sed -i 's/-linux-lts/-linux/g' syslinux/*.cfg
 	sed -i 's/-linux-lts/-linux/g' grub/grub.cfg
 	sed -i 's/syncopated-lts/syncopated/g' profiledef.sh
+fi
+
+if [[ $rt == 'true' ]]; then
+	sed -i 's/^broadcom-wl-dkms$/broadcom-wl/g' packages.x86_64
+	sed -i '/linux-rt-lts-headers/d' packages.x86_64
+	sed -i 's/^linux-rt-lts$/linux/g' packages.x86_64
+	sed -i 's/-linux-rt-lts/-linux/g' efiboot/loader/entries/*
+	sed -i 's/-linux-rt-lts/-linux/g' syslinux/*.cfg
+	sed -i 's/-linux-rt-lts/-linux/g' grub/grub.cfg
+	sed -i 's/syncopated-rt-lts/syncopated/g' profiledef.sh
 fi
 
 end=$(date +%s)

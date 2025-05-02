@@ -625,7 +625,7 @@ select_show() {
 
   Username:      ${NEWUSER:-none}
   Login Shell:   ${NEWSHELL:-none}
-  Login Session: ${LOGIN_WM:-none}
+  Login Session: ${LOGIN_WM:-i3}
   Autologin:     ${AUTOLOGIN:-none}
   Login Type:    ${LOGIN_TYPE:-none}
 

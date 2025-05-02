@@ -3763,19 +3763,17 @@ system_identify() {
 }
 
 install_cachyos_repos() {
-	msg "Install CachyOS Repositories" "\nInstalling CachyOS repositories for performance-optimized packages.\n" 0
-	chrun "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz" 2>"$ERR" 2>&1
-	errshow 0 "chrun 'curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz'"
 
-	chrun "tar xvf cachyos-repo.tar.xz && cd cachyos-repo && sed -i 's/\bpacman -Syu\b/& --noconfirm/g' cachyos-repo.sh'" 2>"$ERR" 2>&1
-	errshow 0 "chrun 'tar xvf cachyos-repo.tar.xz && cd cachyos-repo && sed -i 's/\bpacman -Syu\b/& --noconfirm/g' cachyos-repo.sh'"
-
-	chrun "./cachyos-repo.sh" 2>"$ERR" 2>&1
-	errshow 0 "chrun './cachyos-repo.sh'"
+	{
+		chrun "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz"
+		chrun "tar xvf cachyos-repo.tar.xz && cd cachyos-repo"
+		chrun "sed -i 's/\bpacman -U\b/& --noconfirm/g' cachyos-repo.sh"
+		chrun "sed -i 's/\bpacman -Syu\b/& --noconfirm/g' cachyos-repo.sh"
+		chrun "./cachyos-repo.sh"
+	} >>/tmp/bgout 2>&1
 
 	chrun "pacman -Syu --needed --noconfirm"
 
-	msg "CachyOS Repositories" "\nCachyOS repositories have been successfully installed.\n" 2
 }
 
 ###############################################################################

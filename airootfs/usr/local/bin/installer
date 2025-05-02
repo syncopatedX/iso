@@ -1900,6 +1900,7 @@ install_base() {
 		cp -vf /etc/os-release "$MNT/etc/"
 		cp -vf /etc/lsb-release "$MNT/etc/"
 		cp -vf /etc/modprobe.d "$MNT/etc/"
+		cp -rfv /etc/sysctl.d "$MNT/etc/"
 		cp -vf /etc/skel/.zshrc "$MNT/etc/skel/.zshrc"
 		cp -vf /etc/skel/.zshenv "$MNT/etc/skel/.zshenv"
 		cp -vf /etc/skel/.zprofile "$MNT/etc/skel/.zprofile"

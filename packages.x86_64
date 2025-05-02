@@ -130,6 +130,7 @@ python-pip
 python-setuptools
 qemu-guest-agent
 ranger
+realtime-privileges
 refind
 reflector
 rofi

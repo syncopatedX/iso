@@ -96,6 +96,7 @@ typeset -a BASE_PKGS=(
 	"npm"
 	"python-pip"
 	"python-setuptools"
+	"realtime-privileges"
 	"rofi"
 	"rsync"
 	"rubygems"
@@ -334,6 +335,7 @@ typeset -a ISO_PKGS=(
 	"python-setuptools"
 	"qemu-guest-agent"
 	"ranger"
+	"realtime-privileges"
 	"refind"
 	"reflector"
 	"rofi"
@@ -2041,7 +2043,7 @@ install_base() {
 
 install_user() {
 	local i=0
-	local groups='audio,video,input,log,rfkill,wheel'
+	local groups='audio,realtime,video,input,log,rfkill,wheel'
 
 	echo "Setting root user password and shell"
 	chrun "chpasswd <<< 'root:$ROOT_PASS'" 2>"$ERR" 2>&1

@@ -1,0 +1,10 @@
+# desktop-overlay/etc/systemd/system/set-governor.service
+[Unit]
+Description=Set CPU governor to performance
+
+
+Type=oneshot
+ExecStart=/usr/bin/cpupower frequency-set -g performance
+
+[Install]
+WantedBy=multi-user.target

@@ -59,6 +59,7 @@ cat >>packages.x86_64 <<-EOF
 	rofi
 	rubygems
 	sxhkd
+	terminator
 	wireless-regdb
 	xorg-server
 	xorg-xinit
@@ -69,7 +70,7 @@ while getopts ":huLtl:" OPT; do
 	case "$OPT" in
 	h)
 		echo
-		echo "Usage: ${0##*/} [-hutL]"
+		echo "Usage: ${0##*/} [-hutLR]"
 		echo
 		echo "    -h           Print this message and exit"
 		echo "    -L           Use the LTS kernel instead of vanilla"

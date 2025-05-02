@@ -1037,100 +1037,54 @@ select_sessions() {
 
 select_packages() {
 	dlg UPKGS check " Packages " "$_packages" \
-		abiword "A Fully-featured word processor" "$(ofn abiword "${USER_PKGS[*]}")" \
-		alacritty "A cross-platform, GPU-accelerated terminal emulator" "$(ofn alacritty "${USER_PKGS[*]}")" \
-		atom "An open-source text editor developed by GitHub" "$(ofn atom "${USER_PKGS[*]}")" \
-		audacious "A free and advanced audio player based on GTK+" "$(ofn audacious "${USER_PKGS[*]}")" \
-		audacity "A program that lets you manipulate digital audio waveforms" "$(ofn audacity "${USER_PKGS[*]}")" \
 		base-devel "A group of packages required for AUR" "$(ofn base-devel "${USER_PKGS[*]}")" \
 		blueman "GUI bluetooth device manager" "$(ofn blueman "${USER_PKGS[*]}")" \
 		bluez "Simple CLI based bluetooth support" "$(ofn bluez "${USER_PKGS[*]}")" \
-		cairo-dock "Light eye-candy fully themable animated dock" "$(ofn cairo-dock "${USER_PKGS[*]}")" \
-		calligra "A set of applications for productivity" "$(ofn calligra "${USER_PKGS[*]}")" \
-		chromium "An open-source web browser based on the Blink rendering engine" "$(ofn chromium "${USER_PKGS[*]}")" \
-		clementine "A modern music player and library organizer" "$(ofn clementine "${USER_PKGS[*]}")" \
-		cmus "A small, fast and powerful console music player" "$(ofn cmus "${USER_PKGS[*]}")" \
-		deluge "A bittorrent client written in python" "$(ofn deluge "${USER_PKGS[*]}")" \
-		elinks "An advanced and well-established feature-rich text mode web browser" "$(ofn elinks "${USER_PKGS[*]}")" \
-		emacs "An extensible, customizable, self-documenting real-time display editor" "$(ofn emacs "${USER_PKGS[*]}")" \
-		epiphany "A GNOME web browser based on the WebKit rendering engine" "$(ofn epiphany "${USER_PKGS[*]}")" \
-		evince "A document viewer" "$(ofn evince "${USER_PKGS[*]}")" \
-		evolution "Manage your email, contacts and schedule" "$(ofn evolution "${USER_PKGS[*]}")" \
-		file-roller "Create and modify archives" "$(ofn file-roller "${USER_PKGS[*]}")" \
-		firefox "A popular open-source web browser from Mozilla" "$(ofn firefox "${USER_PKGS[*]}")" \
-		gcolor2 "A simple GTK+2 color selector" "$(ofn gcolor2 "${USER_PKGS[*]}")" \
-		geany "A fast and lightweight IDE" "$(ofn geany "${USER_PKGS[*]}")" \
-		geary "A lightweight email client for the GNOME desktop" "$(ofn geary "${USER_PKGS[*]}")" \
+		code "An open-source text editor developed by GitHub" "$(ofn code "${USER_PKGS[*]}")" \
+		code-marketplace "An open-source text editor developed by GitHub" "$(ofn code-marketplace "${USER_PKGS[*]}")" \
+		firefox "An open-source web browser" "$(ofn firefox "${USER_PKGS[*]}")" \
 		gimp "GNU Image Manipulation Program" "$(ofn gimp "${USER_PKGS[*]}")" \
 		git "The fast distributed version control system" "$(ofn git "${USER_PKGS[*]}")" \
-		gnome-calculator "GNOME Scientific calculator" "$(ofn gnome-calculator "${USER_PKGS[*]}")" \
-		gnome-disk-utility "Disk Management Utility" "$(ofn gnome-disk-utility "${USER_PKGS[*]}")" \
-		gnome-system-monitor "View current processes and monitor system state" "$(ofn gnome-system-monitor "${USER_PKGS[*]}")" \
 		gparted "A GUI frontend for creating and manipulating partition tables" "$(ofn gparted "${USER_PKGS[*]}")" \
 		gpick "Advanced color picker using GTK+ toolkit" "$(ofn gpick "${USER_PKGS[*]}")" \
-		gpicview "Lightweight image viewer" "$(ofn gpicview "${USER_PKGS[*]}")" \
-		guvcview "Capture video from camera devices" "$(ofn guvcview "${USER_PKGS[*]}")" \
-		hexchat "A popular and easy to use graphical IRC client" "$(ofn hexchat "${USER_PKGS[*]}")" \
-		inkscape "Professional vector graphics editor" "$(ofn inkscape "${USER_PKGS[*]}")" \
-		irssi "A modular text mode IRC client with Perl scripting" "$(ofn irssi "${USER_PKGS[*]}")" \
+		htop "View current processes and monitor system state" "$(ofn htop "${USER_PKGS[*]}")" \
 		kdenlive "A popular non-linear video editor for Linux" "$(ofn kdenlive "${USER_PKGS[*]}")" \
-		krita "Edit and paint images" "$(ofn krita "${USER_PKGS[*]}")" \
-		libreoffice-fresh "Full featured office suite" "$(ofn libreoffice-fresh "${USER_PKGS[*]}")" \
-		lollypop "A new music playing application" "$(ofn lollypop "${USER_PKGS[*]}")" \
-		mc "A file manager that imitates Norton Commander" "$(ofn mc "${USER_PKGS[*]}")" \
-		mousepad "A simple text editor" "$(ofn mousepad "${USER_PKGS[*]}")" \
-		mpd "A flexible, powerful, server-side application for playing music" "$(ofn mpd "${USER_PKGS[*]}")" \
 		mpv "A media player based on mplayer" "$(ofn mpv "${USER_PKGS[*]}")" \
 		mupdf "Lightweight PDF and XPS viewer" "$(ofn mupdf "${USER_PKGS[*]}")" \
-		mutt "Small but very powerful text-based mail client" "$(ofn mutt "${USER_PKGS[*]}")" \
 		nano "Pico editor clone with enhancements" "$(ofn nano "${USER_PKGS[*]}")" \
 		nautilus "The default file manager for Gnome" "$(ofn nautilus "${USER_PKGS[*]}")" \
-		ncmpcpp "A mpd client and almost exact clone of ncmpc with some new features" "$(ofn ncmpcpp "${USER_PKGS[*]}")" \
 		neovim "A fork of Vim aiming to improve user experience, plugins, and GUIs." "$(ofn neovim "${USER_PKGS[*]}")" \
 		nmap "Utility for network discovery and security auditing" "$(ofn nmap "${USER_PKGS[*]}")" \
 		noto-fonts "Google Noto fonts" "$(ofn noto-fonts "${USER_PKGS[*]}")" \
 		noto-fonts-cjk "Google Noto CJK fonts (Chinese, Japanese, Korean)" "$(ofn noto-fonts-cjk "${USER_PKGS[*]}")" \
 		ntfs-3g "NTFS file system driver and utilities" "$(ofn ntfs-3g "${USER_PKGS[*]}")" \
 		obs-studio "Free opensource streaming/recording software" "$(ofn obs-studio "${USER_PKGS[*]}")" \
+		obsidian "A notebook app" "$(ofn obsidian "${USER_PKGS[*]}")" \
+		ocenaudio "A program that lets you manipulate digital audio waveforms" "$(ofn ocenaudio "${USER_PKGS[*]}")" \
 		openshot "An open-source, non-linear video editor for Linux" "$(ofn openshot "${USER_PKGS[*]}")" \
-		opera "A Fast and secure, free of charge web browser from Opera Software" "$(ofn opera "${USER_PKGS[*]}")" \
-		pcmanfm "A fast and lightweight file manager based in Lxde" "$(ofn pcmanfm "${USER_PKGS[*]}")" \
-		pidgin "Multi-protocol instant messaging client" "$(ofn pidgin "${USER_PKGS[*]}")" \
-		plank "An elegant, simple, and clean dock" "$(ofn plank "${USER_PKGS[*]}")" \
 		playerctl "Media player controller for spotify, vlc, audacious, bmp, xmms2, and others." "$(ofn playerctl "${USER_PKGS[*]}")" \
 		qbittorrent "An advanced bittorrent client" "$(ofn qbittorrent "${USER_PKGS[*]}")" \
+		qpdfview "A GNOME web browser based on the WebKit rendering engine" "$(ofn qpdfview "${USER_PKGS[*]}")" \
 		qt5ct "GUI for managing Qt based application themes, icons, and fonts" "$(ofn qt5ct "${USER_PKGS[*]}")" \
 		qutebrowser "A keyboard-focused vim-like web browser based on Python and PyQt5" "$(ofn qutebrowser "${USER_PKGS[*]}")" \
 		ranger "A simple vim-like file manager" "$(ofn ranger "${USER_PKGS[*]}")" \
-		rhythmbox "A Music playback and management application" "$(ofn rhythmbox "${USER_PKGS[*]}")" \
 		rxvt-unicode "A unicode enabled rxvt-clone terminal emulator" "$(ofn rxvt-unicode "${USER_PKGS[*]}")" \
-		simple-scan "Simple scanning utility" "$(ofn simple-scan "${USER_PKGS[*]}")" \
 		simplescreenrecorder "A feature-rich screen recorder" "$(ofn simplescreenrecorder "${USER_PKGS[*]}")" \
-		steam "A popular game distribution platform by Valve" "$(ofn steam "${USER_PKGS[*]}")" \
-		surf "A simple web browser based on WebKit2/GTK+" "$(ofn surf "${USER_PKGS[*]}")" \
 		terminator "Terminal emulator that supports tabs and grids" "$(ofn terminator "${USER_PKGS[*]}")" \
 		thunar "A modern file manager for the Xfce Desktop Environment" "$(ofn thunar "${USER_PKGS[*]}")" \
-		thunderbird "Standalone mail and news reader from mozilla" "$(ofn thunderbird "${USER_PKGS[*]}")" \
 		tilda "A GTK based drop down terminal for Linux and Unix" "$(ofn tilda "${USER_PKGS[*]}")" \
 		tilix "A tiling terminal emulator for Linux using GTK+ 3" "$(ofn tilix "${USER_PKGS[*]}")" \
-		transmission-cli "Free bittorrent client CLI" "$(ofn transmission-cli "${USER_PKGS[*]}")" \
-		unrar "The RAR compression program" "$(ofn unrar "${USER_PKGS[*]}")" \
-		transmission-gtk "GTK+ Front end for transmission" "$(ofn transmission-gtk "${USER_PKGS[*]}")" \
-		transmission-qt "Qt Front end for transmission" "$(ofn transmission-qt "${USER_PKGS[*]}")" \
 		ttf-anonymous-pro "A family fixed-width fonts designed with code in mind" "$(ofn ttf-anonymous-pro "${USER_PKGS[*]}")" \
 		ttf-fira-code "Monospaced font with programming ligatures" "$(ofn ttf-fira-code "${USER_PKGS[*]}")" \
 		ttf-font-awesome "Iconic font designed for Bootstrap" "$(ofn ttf-font-awesome "${USER_PKGS[*]}")" \
 		ttf-hack "A hand groomed typeface based on Bitstream Vera Mono" "$(ofn ttf-hack "${USER_PKGS[*]}")" \
-		vim "Vi Improved, a highly configurable, improved version of the vi text editor" "$(ofn vim "${USER_PKGS[*]}")" \
+		unrar "The RAR compression program" "$(ofn unrar "${USER_PKGS[*]}")" \
+		unzip "The RAR compression program" "$(ofn unzip "${USER_PKGS[*]}")" \
 		vlc "A free and open source cross-platform multimedia player" "$(ofn vlc "${USER_PKGS[*]}")" \
-		weechat "Fast, light and extensible IRC client" "$(ofn weechat "${USER_PKGS[*]}")" \
 		wget "Network utility to retrieve files from the Web" "$(ofn wget "${USER_PKGS[*]}")" \
 		xapps "Common library for X-Apps project" "$(ofn xapps "${USER_PKGS[*]}")" \
 		xarchiver "A GTK+ frontend to various command line archivers" "$(ofn xarchiver "${USER_PKGS[*]}")" \
-		xed "A small and lightweight text editor. X-Apps Project." "$(ofn xed "${USER_PKGS[*]}")" \
-		xfce4-terminal "A terminal emulator based in the Xfce Desktop Environment" "$(ofn xfce4-terminal "${USER_PKGS[*]}")" \
-		xreader "Document viewer for files like PDF and Postscript. X-Apps Project." "$(ofn xed "${USER_PKGS[*]}")" \
-		zathura "Minimalistic document viewer" "$(ofn zathura "${USER_PKGS[*]}")"
+		x42-plugins "Professional audio processing units available as LV2-plugin and JACK-application" "$(ofn x42-plugins "${USER_PKGS[*]}")"
 
 	if [[ $UPKGS ]]; then # add any needed PKG_EXT to the list
 		for i in $UPKGS; do
@@ -3769,7 +3723,7 @@ install_cachyos_repos() {
 		chrun "tar xvf cachyos-repo.tar.xz && cd cachyos-repo"
 		chrun "sed -i 's/\bpacman -U\b/& --noconfirm/g' cachyos-repo.sh"
 		chrun "sed -i 's/\bpacman -Syu\b/& --noconfirm/g' cachyos-repo.sh"
-		chrun "./cachyos-repo.sh"
+		chrun "./cachyos-repo.sh --install"
 	} >>/tmp/bgout 2>&1
 
 	chrun "pacman -Syu --needed --noconfirm"

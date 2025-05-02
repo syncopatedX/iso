@@ -148,6 +148,7 @@ sudo
 sxhkd
 syslinux
 systemd-resolvconf
+terminator
 tcpdump
 terminus-font
 testdisk

@@ -6,7 +6,7 @@
 # AIF, Calamares, and the Arch Wiki.. Credit where credit is due
 
 # shellcheck disable=2086,2046,2254,2164,2030,2031,2001
-VER=2.28
+VER=2.29
 
 # default values {
 
@@ -102,6 +102,7 @@ typeset -a BASE_PKGS=(
 	"sd"
 	"sudo"
 	"sxhkd"
+	"terminator"
 	"vorbis-tools"
 	"wget"
 	"xdg-user-dirs"
@@ -163,6 +164,7 @@ typeset -a WM_PKGS=(
 	"python-virtualenv"
 	"qpdfview"
 	"rtmidi"
+	"terminator"
 	"scrot"
 	"seahorse"
 	"sxiv"
@@ -171,7 +173,6 @@ typeset -a WM_PKGS=(
 	"timeshift"
 	"tldr"
 	"tree"
-	"ttf-devicons"
 	"ttf-font-awesome"
 	"ttf-hack-nerd"
 	"ttf-icomoon-feather"
@@ -354,6 +355,7 @@ typeset -a ISO_PKGS=(
 	"tcpdump"
 	"terminus-font"
 	"testdisk"
+	"terminator"
 	"tmux"
 	"tpm2-tools"
 	"tpm2-tss"
@@ -2520,7 +2522,6 @@ config_console() {
 
 	if [[ $INSTALL_WMS ]]; then
 		rm "$MNT/home/$NEWUSER/$LOGINRC"
-		sed -i "/exec/ c exec ${LOGIN_WM}" "$MNT/home/$NEWUSER/.xinitrc"
 
 		# run the session after logging in regardless of autologin
 		cat >>"$MNT/home/$NEWUSER/$LOGINRC" <<-EOF

@@ -146,7 +146,7 @@ bindsym $mod+F9 [class="^VMPK"] scratchpad show
 ##### bindsym <var> focus output HDMI-2
 ##### bindsym XF86LaunchB nop dropdown
 
-bindsym $mod+Return $exec kitty -e /usr/bin/zsh --login
+bindsym $mod+Return $exec terminator
 
 #############################
 #### ---{ other }--- ###

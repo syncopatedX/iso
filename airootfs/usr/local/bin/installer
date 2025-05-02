@@ -3728,11 +3728,11 @@ system_identify() {
 install_cachyos_repos() {
 
 	{
-		chrun "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /tmp/cachyos-repo.tar.xz"
-		chrun "cd /tmp && tar xvf cachyos-repo.tar.xz && cd cachyos-repo"
-		chrun "sed -i 's/\bpacman -U\b/& --noconfirm/g' /tmp/cachyos-repo/cachyos-repo.sh"
-		chrun "sed -i 's/\bpacman -Syu\b/& --noconfirm/g' /tmp/cachyos-repo/cachyos-repo.sh"
-		chrun "cd /tmp/cachyos-repo && ./cachyos-repo.sh --install"
+		chrun "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz"
+		chrun "tar xvf cachyos-repo.tar.xz"
+		chrun "sed -i 's/\bpacman -U\b/& --noconfirm/g' cachyos-repo/cachyos-repo.sh"
+		chrun "sed -i 's/\bpacman -Syu\b/& --noconfirm/g' cachyos-repo/cachyos-repo.sh"
+		chrun "cd cachyos-repo && ./cachyos-repo.sh --install"
 	} >>/tmp/bgout 2>&1
 
 	chrun "pacman -Syu --needed --noconfirm"

@@ -1824,7 +1824,6 @@ install_main() {
 	genfstab -U "$MNT" >"$MNT/etc/fstab" 2>"$ERR"
 	errshow 1 "genfstab -U '$MNT' > '$MNT/etc/fstab'"
 	[[ -f $MNT/swapfile ]] && sed -i "s~${MNT}~~" "$MNT/etc/fstab"
-	install_cachyos_repos
 	install_packages
 	install_tearfree
 	install_mkinitcpio
@@ -2286,8 +2285,6 @@ install_check_bg() {
 			chrun "pacman -Syu"
 		fi
 
-		install_cachyos_repos
-
 		chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
 	} >>/tmp/bgout 2>&1
@@ -2438,8 +2435,6 @@ install_background() {
 				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm"
 				chrun "pacman -Syu"
 			fi
-
-			install_cachyos_repos
 
 			chrun "pacman -S ${ISO_PKGS[*]} $luks $NET_TYPE --noconfirm --needed"
 
@@ -3725,21 +3720,6 @@ system_identify() {
 	fi
 }
 
-install_cachyos_repos() {
-
-	{
-		chrun "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz"
-		chrun "tar xvf cachyos-repo.tar.xz"
-		chrun "sed -i 's/\bpacman -U\b/& --noconfirm/g' cachyos-repo/cachyos-repo.sh"
-		chrun "sed -i 's/\bpacman -Syu\b/& --noconfirm/g' cachyos-repo/cachyos-repo.sh"
-		chrun "cd cachyos-repo && ./cachyos-repo.sh --install"
-	} >>/tmp/bgout 2>&1
-
-	chrun "pacman -Syu --needed --noconfirm"
-
-}
-
-
 ###############################################################################
 # entry point
 
@@ -3858,13 +3838,7 @@ if [[ ! -f /tmp/new ]]; then
 	msg "Update" "\nChecking for installer updates.\n" 0
 	(reflector --list-countries 2>/dev/null | sed '1,2d' | awk 'NF{NF--}; {print}' >/tmp/mcountry) &
 	echo $! >/tmp/mirrorpid
-	if curl -fsSL 'https://gitlab.com/syncopatedX/archlabs-iso/-/snippets/4832207' -o /tmp/new; then
-		if (($(vercmp "$(awk -F= '/^VER=/ {print $2}' /tmp/new)" "$VER") > 0)); then
-			cp /tmp/new /usr/local/bin/installer
-			chmod +x /usr/local/bin/installer
-			exec /usr/local/bin/installer "$@"
-		fi
-	fi
+
 elif [[ -f /tmp/mirrorpid ]]; then
 	mirrorpid=$(</tmp/mirrorpid)
 	rm /tmp/mirrorpid

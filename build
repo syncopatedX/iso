@@ -142,6 +142,7 @@ if [[ $lts == 'true' ]]; then
 	sed -i 's/-linux-lts/-linux/g' efiboot/loader/entries/*
 	sed -i 's/-linux-lts/-linux/g' syslinux/*.cfg
 	sed -i 's/-linux-lts/-linux/g' grub/grub.cfg
+	sed -i 's/-linux-lts/-linux/g' airootfs/etc/mkinitcpio.d/linux.preset
 	sed -i 's/syncopated-lts/syncopated/g' profiledef.sh
 elif [[ $rt == 'true' ]]; then
 	sed -i 's/^broadcom-wl-dkms$/broadcom-wl/g' packages.x86_64
@@ -150,6 +151,7 @@ elif [[ $rt == 'true' ]]; then
 	sed -i 's/-linux-rt-lts/-linux/g' efiboot/loader/entries/*
 	sed -i 's/-linux-rt-lts/-linux/g' syslinux/*.cfg
 	sed -i 's/-linux-rt-lts/-linux/g' grub/grub.cfg
+	sed -i 's/-linux-rt-lts/-linux/g' airootfs/etc/mkinitcpio.d/linux.preset
 	sed -i 's/syncopated-rt-lts/syncopated/g' profiledef.sh
 fi
 

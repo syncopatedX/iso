@@ -66,7 +66,7 @@ cat >>packages.x86_64 <<-EOF
 	xterm
 EOF
 
-while getopts ":huLRtl:" OPT; do
+while getopts ":hLRt:" OPT; do
 	case "$OPT" in
 	h)
 		echo
@@ -75,27 +75,8 @@ while getopts ":huLRtl:" OPT; do
 		echo "    -h           Print this message and exit"
 		echo "    -L           Use the LTS kernel instead of vanilla"
 		echo "    -R           Use the Realtime-LTS kernel instead of vanilla"
-		echo "    -u           Remotely update the installer"
-		echo "    -l <PATH>    Locally update the installer"
 		echo
 		exit 0
-		;;
-	l)
-		echo "Updating installer locally"
-		sleep 0.5
-		[[ -f "$OPTARG" ]] || {
-			echo "${0##*/}: error: path does not exist or is not a file: $OPTARG"
-			exit 1
-		}
-		cp -vf "$OPTARG" airootfs/usr/local/bin/installer || exit 1
-		;;
-	u)
-		echo "Updating installer remotely"
-		sleep 0.5
-		if ! curl -fsSL https://gitlab.com/syncopatedX/archlabs-iso/-/snippets/4832207 -o airootfs/usr/local/bin/installer; then
-			echo "${0##*/}: error: failed to update installer"
-			exit 1
-		fi
 		;;
 	L)
 		echo "Enabling LTS"
@@ -141,15 +122,15 @@ shift $((OPTIND - 1))
 [[ -e airootfs/etc/os-release ]] && sed -i "s/\(VERSION_ID\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/os-release
 [[ -e airootfs/etc/lsb-release ]] && sed -i "s/\(DISTRIB_RELEASE\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/lsb-release
 
-if [ ! -d "/home/repository" ]; then
-	cp -r ./repository /home/
-else
-	rm -rf ./home/repository
-	cp -r ./repository /home/
-fi
+# if [ ! -d "/home/repository" ]; then
+# 	cp -r ./repository /home/
+# else
+# 	rm -rf ./home/repository
+# 	cp -r ./repository /home/
+# fi
 
 # build it
-mkarchiso -v .
+#mkarchiso -v .
 
 # clean up
 rm -rf work

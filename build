@@ -59,41 +59,24 @@ cat >>packages.x86_64 <<-EOF
 	rofi
 	rubygems
 	sxhkd
+	terminator
 	wireless-regdb
 	xorg-server
 	xorg-xinit
 	xterm
 EOF
 
-while getopts ":huLtl:" OPT; do
+while getopts ":hLRt:" OPT; do
 	case "$OPT" in
 	h)
 		echo
-		echo "Usage: ${0##*/} [-hutL]"
+		echo "Usage: ${0##*/} [-hutLR]"
 		echo
 		echo "    -h           Print this message and exit"
 		echo "    -L           Use the LTS kernel instead of vanilla"
-		echo "    -u           Remotely update the installer"
-		echo "    -l <PATH>    Locally update the installer"
+		echo "    -R           Use the Realtime-LTS kernel instead of vanilla"
 		echo
 		exit 0
-		;;
-	l)
-		echo "Updating installer locally"
-		sleep 0.5
-		[[ -f "$OPTARG" ]] || {
-			echo "${0##*/}: error: path does not exist or is not a file: $OPTARG"
-			exit 1
-		}
-		cp -vf "$OPTARG" airootfs/usr/local/bin/installer || exit 1
-		;;
-	u)
-		echo "Updating installer remotely"
-		sleep 0.5
-		if ! curl -fsSL https://gitlab.com/syncopatedX/archlabs-iso/-/snippets/4832207 -o airootfs/usr/local/bin/installer; then
-			echo "${0##*/}: error: failed to update installer"
-			exit 1
-		fi
 		;;
 	L)
 		echo "Enabling LTS"
@@ -108,6 +91,20 @@ while getopts ":huLtl:" OPT; do
 		sed -i 's/"syncopated"/"syncopated-lts"/g' profiledef.sh
 
 		lts=true
+		;;
+	R)
+		echo "Enabling Realtime-LTS"
+		sleep 0.5
+		sed -i 's/^broadcom-wl$/broadcom-wl-dkms/g' packages.x86_64
+		sed -i '/^linux$/ a linux-rt-lts-headers' packages.x86_64
+		sed -i 's/^linux$/linux-rt-lts/g' packages.x86_64
+		sed -i 's/-linux/-linux-rt-lts/g' efiboot/loader/entries/*
+		sed -i 's/-linux/-linux-rt-lts/g' syslinux/*.cfg
+		sed -i 's/-linux/-linux-rt-lts/g' grub/grub.cfg
+		sed -i 's/-linux/-linux-rt-lts/g' airootfs/etc/mkinitcpio.d/linux.preset
+		sed -i 's/"syncopated"/"syncopated-rt-lts"/g' profiledef.sh
+
+		rt=true
 		;;
 	:)
 		echo "${0##*/}: error: -$OPTARG requires an argument: <PATH_TO_INSTALLER>"
@@ -125,15 +122,15 @@ shift $((OPTIND - 1))
 [[ -e airootfs/etc/os-release ]] && sed -i "s/\(VERSION_ID\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/os-release
 [[ -e airootfs/etc/lsb-release ]] && sed -i "s/\(DISTRIB_RELEASE\)=.*/\1=$(date +%Y.%m.%d)/g" airootfs/etc/lsb-release
 
-if [ ! -d "/home/repository" ]; then
-	cp -r ./repository /home/
-else
-	rm -rf ./home/repository
-	cp -r ./repository /home/
-fi
+# if [ ! -d "/home/repository" ]; then
+# 	cp -r ./repository /home/
+# else
+# 	rm -rf ./home/repository
+# 	cp -r ./repository /home/
+# fi
 
 # build it
-mkarchiso -v .
+#mkarchiso -v .
 
 # clean up
 rm -rf work
@@ -145,7 +142,17 @@ if [[ $lts == 'true' ]]; then
 	sed -i 's/-linux-lts/-linux/g' efiboot/loader/entries/*
 	sed -i 's/-linux-lts/-linux/g' syslinux/*.cfg
 	sed -i 's/-linux-lts/-linux/g' grub/grub.cfg
+	sed -i 's/-linux-lts/-linux/g' airootfs/etc/mkinitcpio.d/linux.preset
 	sed -i 's/syncopated-lts/syncopated/g' profiledef.sh
+elif [[ $rt == 'true' ]]; then
+	sed -i 's/^broadcom-wl-dkms$/broadcom-wl/g' packages.x86_64
+	sed -i '/linux-rt-lts-headers/d' packages.x86_64
+	sed -i 's/^linux-rt-lts$/linux/g' packages.x86_64
+	sed -i 's/-linux-rt-lts/-linux/g' efiboot/loader/entries/*
+	sed -i 's/-linux-rt-lts/-linux/g' syslinux/*.cfg
+	sed -i 's/-linux-rt-lts/-linux/g' grub/grub.cfg
+	sed -i 's/-linux-rt-lts/-linux/g' airootfs/etc/mkinitcpio.d/linux.preset
+	sed -i 's/syncopated-rt-lts/syncopated/g' profiledef.sh
 fi
 
 end=$(date +%s)

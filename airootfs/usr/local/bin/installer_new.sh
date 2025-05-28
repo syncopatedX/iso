@@ -172,7 +172,6 @@ cleanup() {
     if [[ "$LUKS_ENABLED" == "true" && -b "/dev/mapper/$LUKS_ROOT_MAPPER_NAME" ]]; then
         cryptsetup close "$LUKS_ROOT_MAPPER_NAME" 2>/dev/null && log "Closed LUKS device $LUKS_ROOT_MAPPER_NAME" || log "Warning: Failed to close LUKS $LUKS_ROOT_MAPPER_NAME"
     fi
-    # TODO: Close other LUKS devices if any (e.g. luks_home)
 
     if [[ "$LVM_ENABLED" == "true" && -n "$LVM_VG_NAME" ]]; then
         if vgdisplay "$LVM_VG_NAME" &>/dev/null; then
@@ -196,11 +195,16 @@ gather_install_parameters() {
     KEYMAP="${KEYMAP_CHOICE:-us}"
 
     # Mirror selection (simple version)
-    # TODO: Implement reflector integration like original script's select_mirrors
     run_dialog MIRROR_COUNTRY_TEMP input "Mirror Country" "Enter comma-separated country codes for mirrors (e.g., US,DE):" "$MIRROR_COUNTRY" || handle_error "Mirror country selection cancelled."
     MIRROR_COUNTRY="$MIRROR_COUNTRY_TEMP"
-    log "Mirror countries: $MIRROR_COUNTRY (Full reflector setup is TODO)"
-    # Actual reflector call would happen before pacstrap
+    log "Mirror countries: $MIRROR_COUNTRY"
+    if [[ -n "$MIRROR_COUNTRY" && "$MIRROR_COUNTRY" != "skip" ]]; then
+        log "Updating mirrorlist for countries: $MIRROR_COUNTRY..."
+        run_dialog "" infobox "Updating Mirrors" "Fetching fastest mirrors for $MIRROR_COUNTRY..." 5 70
+        log_cmd "reflector --country \"$MIRROR_COUNTRY\" --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist" || log "Warning: reflector failed. Using existing mirrorlist."
+    else
+        log "Skipping reflector mirror update."
+    fi
 
     # Disk and Partitioning
     run_dialog TARGET_DISK_CHOICE radiolist "Target Disk" "Select target disk for installation:" $(get_available_disks) || handle_error "Target disk selection cancelled."
@@ -237,7 +241,10 @@ gather_install_parameters() {
         local luks_confirm; run_dialog luks_confirm password "LUKS Password (Confirm)" "Confirm LUKS password:" || handle_error "LUKS password confirm cancelled."
         [[ "$LUKS_PASSWORD_TEMP" != "$luks_confirm" ]] && handle_error "LUKS passwords do not match."; [[ -z "$LUKS_PASSWORD_TEMP" ]] && handle_error "LUKS password cannot be empty."
         LUKS_PASSWORD="$LUKS_PASSWORD_TEMP"
-        # TODO: Advanced LUKS options (cipher, key size) - run_dialog LUKS_OPTIONS input ...
+        run_dialog LUKS_OPTIONS input "Advanced LUKS Options" "Enter advanced LUKS options (e.g., --cipher aes-xts-plain64 --key-size 512).\nLeave blank for defaults." "" || handle_error "Advanced LUKS options entry cancelled."
+        if [[ -n "$LUKS_OPTIONS" ]]; then
+            log "Advanced LUKS options set: $LUKS_OPTIONS"
+        fi
         log "LUKS encryption enabled."
     fi
 
@@ -544,9 +551,119 @@ manual_partition_flow() {
     if [[ "$FORMAT_ROOT" == "yes" ]]; then
         format_and_mount_root "$ROOT_PARTITION_DEVICE" # This handles BTRFS subvolumes too
     else
-        log "Skipping format of $ROOT_PARTITION_DEVICE. Mounting as is."
-        log_cmd "mount $ROOT_PARTITION_DEVICE /mnt" || handle_error "Failed to mount existing root $ROOT_PARTITION_DEVICE."
-        # TODO: BTRFS subvolume handling for existing BTRFS
+        log "Skipping format of $ROOT_PARTITION_DEVICE."
+        if [[ "$ROOT_FS_TYPE" == "btrfs" ]]; then
+            log "Selected root is BTRFS and will not be formatted. Checking subvolume configuration for $ROOT_PARTITION_DEVICE."
+            local USE_CUSTOM_SUBVOLS
+            run_dialog USE_CUSTOM_SUBVOLS yesno "Custom BTRFS Subvolumes" \
+                "Your existing BTRFS root ($ROOT_PARTITION_DEVICE) will not be formatted.\nDo you want to specify custom subvolume names for mounting / (root), /home, and /var?" || handle_error "Custom BTRFS subvolume choice cancelled."
+
+            if [[ "$USE_CUSTOM_SUBVOLS" == "yes" ]]; then
+                local CUSTOM_ROOT_SUBVOL=""
+                local CUSTOM_HOME_SUBVOL=""
+                local CUSTOM_VAR_SUBVOL=""
+
+                run_dialog CUSTOM_ROOT_SUBVOL input "Root Subvolume (/)" \
+                    "Enter the name of the BTRFS subvolume for / (root).\nDefault: @\nLeave BLANK to use the top-level BTRFS volume for /." "@" || handle_error "Root subvolume entry cancelled."
+                run_dialog CUSTOM_HOME_SUBVOL input "Home Subvolume (/home)" \
+                    "Enter the name of the BTRFS subvolume for /home.\nDefault: @home\nLeave BLANK if /home should be part of the root subvolume or top-level." "@home" || handle_error "Home subvolume entry cancelled."
+                run_dialog CUSTOM_VAR_SUBVOL input "Var Subvolume (/var)" \
+                    "Enter the name of the BTRFS subvolume for /var.\nDefault: @var\nLeave BLANK if /var should be part of the root subvolume or top-level." "@var" || handle_error "/var subvolume entry cancelled."
+
+                local BTRFS_TMP_MOUNT="/mnt/btrfs_tmp_check_$$"
+                log_cmd "mkdir -p $BTRFS_TMP_MOUNT" || handle_error "Failed to create temporary BTRFS mount point $BTRFS_TMP_MOUNT."
+                log_cmd "mount -o ro $ROOT_PARTITION_DEVICE $BTRFS_TMP_MOUNT" || { rmdir "$BTRFS_TMP_MOUNT" &>/dev/null; handle_error "Failed to mount $ROOT_PARTITION_DEVICE to $BTRFS_TMP_MOUNT for subvolume check."; }
+
+                # Mount Root
+                if [[ -n "$CUSTOM_ROOT_SUBVOL" ]]; then
+                    log "Checking for custom root subvolume '$CUSTOM_ROOT_SUBVOL' on $ROOT_PARTITION_DEVICE..."
+                    if ! btrfs subvolume list -o "$BTRFS_TMP_MOUNT" | grep -qE "[[:space:]]path ${CUSTOM_ROOT_SUBVOL}$"; then
+                        log_cmd "umount $BTRFS_TMP_MOUNT"
+                        rmdir "$BTRFS_TMP_MOUNT" &>/dev/null
+                        handle_error "Specified root subvolume '$CUSTOM_ROOT_SUBVOL' not found on $ROOT_PARTITION_DEVICE."
+                    fi
+                    log "Mounting custom root subvolume '$CUSTOM_ROOT_SUBVOL' to /mnt..."
+                    log_cmd "mount -o subvol=$CUSTOM_ROOT_SUBVOL,compress=zstd $ROOT_PARTITION_DEVICE /mnt" || handle_error "Failed to mount custom root subvolume '$CUSTOM_ROOT_SUBVOL'."
+                    BTRFS_SUBVOLUMES_ENABLED="true"
+                else
+                    log "Mounting top-level BTRFS volume of $ROOT_PARTITION_DEVICE to /mnt..."
+                    log_cmd "mount -o compress=zstd $ROOT_PARTITION_DEVICE /mnt" || handle_error "Failed to mount top-level BTRFS from $ROOT_PARTITION_DEVICE."
+                    BTRFS_SUBVOLUMES_ENABLED="false"
+                fi
+
+                # Mount Home
+                if [[ -n "$CUSTOM_HOME_SUBVOL" ]]; then
+                    log "Checking for custom home subvolume '$CUSTOM_HOME_SUBVOL' on $ROOT_PARTITION_DEVICE..."
+                    if ! btrfs subvolume list -o "$BTRFS_TMP_MOUNT" | grep -qE "[[:space:]]path ${CUSTOM_HOME_SUBVOL}$"; then
+                        log_cmd "umount $BTRFS_TMP_MOUNT"
+                        rmdir "$BTRFS_TMP_MOUNT" &>/dev/null
+                        handle_error "Specified home subvolume '$CUSTOM_HOME_SUBVOL' not found on $ROOT_PARTITION_DEVICE."
+                    fi
+                    log "Mounting custom home subvolume '$CUSTOM_HOME_SUBVOL' to /mnt/home..."
+                    log_cmd "mkdir -p /mnt/home" || handle_error "Failed to create /mnt/home directory."
+                    log_cmd "mount -o subvol=$CUSTOM_HOME_SUBVOL,compress=zstd $ROOT_PARTITION_DEVICE /mnt/home" || handle_error "Failed to mount custom home subvolume '$CUSTOM_HOME_SUBVOL'."
+                else
+                    log "Custom home subvolume not specified. /home will be part of the root filesystem."
+                fi
+
+                # Mount Var
+                if [[ -n "$CUSTOM_VAR_SUBVOL" ]]; then
+                    log "Checking for custom var subvolume '$CUSTOM_VAR_SUBVOL' on $ROOT_PARTITION_DEVICE..."
+                    if ! btrfs subvolume list -o "$BTRFS_TMP_MOUNT" | grep -qE "[[:space:]]path ${CUSTOM_VAR_SUBVOL}$"; then
+                        log_cmd "umount $BTRFS_TMP_MOUNT"
+                        rmdir "$BTRFS_TMP_MOUNT" &>/dev/null
+                        handle_error "Specified /var subvolume '$CUSTOM_VAR_SUBVOL' not found on $ROOT_PARTITION_DEVICE."
+                    fi
+                    log "Mounting custom var subvolume '$CUSTOM_VAR_SUBVOL' to /mnt/var..."
+                    log_cmd "mkdir -p /mnt/var" || handle_error "Failed to create /mnt/var directory."
+                    log_cmd "mount -o subvol=$CUSTOM_VAR_SUBVOL,compress=zstd $ROOT_PARTITION_DEVICE /mnt/var" || handle_error "Failed to mount custom var subvolume '$CUSTOM_VAR_SUBVOL'."
+                else
+                    log "Custom /var subvolume not specified. /var will be part of the root filesystem."
+                fi
+
+                log_cmd "umount $BTRFS_TMP_MOUNT" || log "Warning: Failed to unmount temporary BTRFS check mount $BTRFS_TMP_MOUNT."
+                rmdir "$BTRFS_TMP_MOUNT" &>/dev/null || log "Warning: Failed to remove temporary BTRFS check directory $BTRFS_TMP_MOUNT."
+                log "Custom BTRFS subvolume mounting process complete."
+
+            else # Auto-detect standard subvolumes
+                log "Attempting to auto-detect and mount standard BTRFS subvolumes (@, @home) from $ROOT_PARTITION_DEVICE."
+                log_cmd "mount $ROOT_PARTITION_DEVICE /mnt" || handle_error "Failed to mount BTRFS top-level $ROOT_PARTITION_DEVICE for auto-detection."
+
+                local found_at_subvol="false"
+                local found_athome_subvol="false"
+
+                if btrfs subvolume list -o /mnt | grep -qE '[[:space:]]path @$'; then
+                    found_at_subvol="true"
+                    log "Standard '@' subvolume detected."
+                fi
+                if btrfs subvolume list -o /mnt | grep -qE '[[:space:]]path @home$'; then
+                    found_athome_subvol="true"
+                    log "Standard '@home' subvolume detected."
+                fi
+
+                if [[ "$found_at_subvol" == "true" ]]; then
+                    log "Remounting with '@' subvolume as root."
+                    log_cmd "umount /mnt" || handle_error "Failed to unmount BTRFS top-level for @ subvolume remount."
+                    log_cmd "mount -o subvol=@,compress=zstd $ROOT_PARTITION_DEVICE /mnt" || handle_error "Failed to mount '@' subvolume."
+                    BTRFS_SUBVOLUMES_ENABLED="true"
+
+                    if [[ "$found_athome_subvol" == "true" ]]; then
+                        log "Mounting '@home' subvolume."
+                        log_cmd "mkdir -p /mnt/home" || handle_error "Failed to create /mnt/home for @home subvolume."
+                        log_cmd "mount -o subvol=@home,compress=zstd $ROOT_PARTITION_DEVICE /mnt/home" || handle_error "Failed to mount '@home' subvolume."
+                    else
+                        log "'@home' subvolume not detected. /home will be part of '@' subvolume."
+                    fi
+                else
+                    log "Standard '@' subvolume not detected. Using BTRFS top-level as root. /home will be part of the top-level filesystem."
+                    BTRFS_SUBVOLUMES_ENABLED="false"
+                fi
+                log "BTRFS auto-detection and mounting process complete."
+            fi
+        else # Not BTRFS, just mount it as is
+            log "Mounting non-BTRFS $ROOT_PARTITION_DEVICE as is to /mnt."
+            log_cmd "mount $ROOT_PARTITION_DEVICE /mnt" || handle_error "Failed to mount existing root $ROOT_PARTITION_DEVICE."
+        fi
     fi
 
 
@@ -615,14 +732,6 @@ setup_disk() {
         *) handle_error "Unknown partitioning scheme: $PARTITION_SCHEME" ;;
     esac
 
-    # TODO: LVM setup if LVM_ENABLED is true and not handled within auto/manual flows yet.
-    # This would typically involve:
-    # 1. If LUKS is enabled, the PV is /dev/mapper/$LUKS_ROOT_MAPPER_NAME
-    # 2. Else, the PV is the raw root partition device from auto/manual.
-    # 3. pvcreate, vgcreate, lvcreate for root, home, etc.
-    # 4. Update ROOT_PARTITION_DEVICE to /dev/$LVM_VG_NAME/lv_root (or similar)
-    # 5. Format and mount these LVs.
-    # This is a complex part deferred for now. The current script assumes non-LVM or very simple LVM.
 
     log "Disk setup process finished."
     save_checkpoint "disk_setup_complete"
@@ -630,12 +739,6 @@ setup_disk() {
 
 install_base_system() {
     log "Installing base system..."
-    # Update mirrorlist before pacstrap if MIRROR_COUNTRY is set
-    if [[ -n "$MIRROR_COUNTRY" && "$MIRROR_COUNTRY" != "skip" ]]; then
-        log "Updating mirrorlist for countries: $MIRROR_COUNTRY..."
-        log_cmd "reflector --country \"$MIRROR_COUNTRY\" --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist" || log "Warning: reflector failed. Using existing mirrorlist."
-    fi
-
     local pacstrap_pkgs_array=("base" "base-devel" "$KERNEL_CHOICE" "linux-firmware" "ansible" "sudo" "vim" "git")
     # Add network manager based on a variable (e.g., NETWORK_CONFIG_TYPE set in gather_parameters)
     # For now, hardcoding NetworkManager as it's common and was in original pacstrap.
@@ -770,8 +873,20 @@ main() {
     log "Starting $DIST_NAME Installer (New Version)..."
     if [[ $EUID -ne 0 ]]; then handle_error "This script must be run as root."; fi
     trap 'echo; run_dialog CONFIRM_EXIT yesno "Confirm Exit" "Are you sure you want to exit the installer?" || main; cleanup; exit 130' INT
-    if ! command -v dialog >/dev/null 2>&1; then echo "ERROR: 'dialog' command not found." >&2; exit 1; fi
-    # TODO: Add more dependency checks (parted, cryptsetup, lvm2, pacstrap, arch-chroot, lsblk, reflector)
+    if ! command -v dialog >/dev/null 2>&1; then echo "ERROR: 'dialog' command not found. Please install the 'dialog' package." >&2; exit 1; fi
+
+    local deps=("parted" "cryptsetup" "lvm" "pacstrap" "arch-chroot" "lsblk" "reflector" "sgdisk" "wipefs" "mkfs.fat" "mkfs.btrfs" "btrfs")
+    # Add other mkfs variants like mkfs.ext4, mkfs.xfs if they are not typically part of a 'coreutils' or 'e2fsprogs' type package already expected.
+    # Assuming common mkfs tools are generally available if base utilities are.
+    for dep in "${deps[@]}"; do
+        if ! command -v "$dep" >/dev/null 2>&1; then
+            # No dialog here as dialog itself is checked above. Error directly.
+            log "FATAL ERROR: Required command '$dep' not found. Please install it and try again."
+            echo "FATAL ERROR: Required command '$dep' not found. Please install it and try again." >&2
+            exit 1
+        fi
+    done
+    log "All essential command dependencies met."
 
     load_checkpoint
     if [[ "$current_step" < "parameters_gathered" ]]; then gather_install_parameters || handle_error "Failed: gather_install_parameters"; fi

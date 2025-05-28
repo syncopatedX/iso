@@ -13,7 +13,7 @@ ANS_VARS_FILE="/mnt/etc/ansible/install_vars.yml"
 ANS_PLAYBOOK_DIR_HOST="./ansible_setup" # Default, can be overridden
 ANS_PLAYBOOK_DIR_TARGET="/mnt/root/ansible_setup"
 MAIN_PLAYBOOK="site.yml"
-DIALOG_OPTS="--cr-wrap --backtitle \"$DIST_NAME Installer\""
+DIALOG_OPTS=(--cr-wrap --backtitle "$DIST_NAME Installer")
 CHECKPOINT_FILE="/tmp/installer_checkpoint.txt"
 TMP_ANS_FILE="/tmp/dialog_answer.$$"
 
@@ -83,7 +83,7 @@ handle_error() {
     local error_message="$1"
     local exit_code="${2:-1}"
     log "FATAL ERROR: $error_message"
-    dialog $DIALOG_OPTS --title "Fatal Error" --msgbox "An unrecoverable error occurred:\n\n$error_message\n\nCheck $INSTALL_LOG for details." 10 70
+    dialog "${DIALOG_OPTS[@]}" --title "Fatal Error" --msgbox "An unrecoverable error occurred:\n\n$error_message\n\nCheck $INSTALL_LOG for details." 10 70
     cleanup
     exit "$exit_code"
 }
@@ -100,18 +100,18 @@ run_dialog() {
     local __ret_code=0
     >"$TMP_ANS_FILE"
     case "$__dialog_type" in
-        input) dialog $DIALOG_OPTS --title "$__title" --inputbox "$__text" 10 70 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
-        password) dialog $DIALOG_OPTS --title "$__title" --passwordbox "$__text" 10 70 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
+        input) dialog "${DIALOG_OPTS[@]}" --title "$__title" --inputbox "$__text" 10 70 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
+        password) dialog "${DIALOG_OPTS[@]}" --title "$__title" --passwordbox "$__text" 10 70 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
         yesno)
-            dialog $DIALOG_OPTS --title "$__title" --yesno "$__text" 10 70 "$@"
+            dialog "${DIALOG_OPTS[@]}" --title "$__title" --yesno "$__text" 10 70 "$@"
             __ret_code=$?
             if [[ $__ret_code -eq 0 ]]; then eval "$__result_var='yes'"; else eval "$__result_var='no'"; fi
             return $__ret_code ;;
-        menu) dialog $DIALOG_OPTS --title "$__title" --menu "$__text" 0 0 0 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
-        checklist) dialog $DIALOG_OPTS --title "$__title" --checklist "$__text" 0 0 0 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
-        radiolist) dialog $DIALOG_OPTS --title "$__title" --radiolist "$__text" 0 0 0 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
-        msgbox) dialog $DIALOG_OPTS --title "$__title" --msgbox "$__text" 10 70 "$@"; __ret_code=$? ;;
-        infobox) dialog $DIALOG_OPTS --title "$__title" --infobox "$__text" 5 70 "$@"; sleep 2; __ret_code=0 ;;
+        menu) dialog "${DIALOG_OPTS[@]}" --title "$__title" --menu "$__text" 0 0 0 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
+        checklist) dialog "${DIALOG_OPTS[@]}" --title "$__title" --checklist "$__text" 0 0 0 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
+        radiolist) dialog "${DIALOG_OPTS[@]}" --title "$__title" --radiolist "$__text" 0 0 0 "$@" 2> "$TMP_ANS_FILE"; __ret_code=$? ;;
+        msgbox) dialog "${DIALOG_OPTS[@]}" --title "$__title" --msgbox "$__text" 10 70 "$@"; __ret_code=$? ;;
+        infobox) dialog "${DIALOG_OPTS[@]}" --title "$__title" --infobox "$__text" 5 70 "$@"; sleep 2; __ret_code=0 ;;
         *) log "ERROR: Unknown dialog type '$__dialog_type'"; return 1 ;;
     esac
     if [[ $__ret_code -eq 0 && -f "$TMP_ANS_FILE" ]]; then
@@ -141,7 +141,7 @@ load_checkpoint() {
     fi
     log "No checkpoint file found."
     current_step=""
-    return 1
+    return 0
 }
 
 # --- Utility Functions ---

@@ -2,3 +2,4 @@ out/
 work/
 qcow2/
 /.qodo/
+.ansible/

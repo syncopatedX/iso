@@ -115,10 +115,21 @@ run_dialog() {
         *) log "ERROR: Unknown dialog type '$__dialog_type'"; return 1 ;;
     esac
     if [[ $__ret_code -eq 0 && -f "$TMP_ANS_FILE" ]]; then
-        eval "$__result_var=\"\$(<'$TMP_ANS_FILE')\""
+        # Only attempt to assign to __result_var if it's not empty.
+        # This prevents errors for dialog types like infobox that don't set a variable.
+        if [[ -n "$__result_var" ]]; then
+            eval "$__result_var=\"\$(<'$TMP_ANS_FILE')\""
+        fi
+        rm -f "$TMP_ANS_FILE" # Clean up the temp file
     elif [[ $__ret_code -ne 0 ]]; then
         log "Dialog '$__title' cancelled or failed (code $__ret_code)."
+        rm -f "$TMP_ANS_FILE" # Also remove if dialog failed and file might exist
         return 1
+    else
+        # If __ret_code was 0, but $TMP_ANS_FILE didn't exist (e.g. msgbox, infobox don't create it)
+        # or if __result_var was empty (infobox case) and eval was skipped.
+        # Ensure $TMP_ANS_FILE (if it somehow exists for non-output dialogs) is removed.
+        rm -f "$TMP_ANS_FILE"
     fi
     return 0
 }
@@ -149,7 +160,7 @@ detect_firmware_type() {
     if [ -d /sys/firmware/efi/efivars ]; then FIRMWARE_TYPE="UEFI"; else FIRMWARE_TYPE="BIOS"; fi
     log "Detected firmware type: $FIRMWARE_TYPE"
 }
-get_available_disks() { lsblk -dno NAME,SIZE,MODEL | awk '{printf "%s \"%s - %s\" off\n", "/dev/"$1, $2, $3}'; }
+get_available_disks() { lsblk -dno NAME,SIZE,MODEL | awk '{model=$3; for(i=4; i<=NF; i++) model=model" "$i; gsub(/^ *| *$/, "", model); if (model == "") model="N/A"; printf "%s \"%s - %s\" off\n", "/dev/"$1, $2, model}'; }
 get_locales() { awk '/UTF-8/ && !/^#/ {gsub(/\.UTF-8.*/, ".UTF-8"); print $1 " \"\" off"}' /etc/locale.gen | sort -u; }
 get_timezones() { find /usr/share/zoneinfo -type f -printf "%P\n" | sort | awk '{print $1 " \"\" off"}'; }
 get_keymaps() { localectl list-x11-keymap-layouts | awk '{print $1 " \"\" off"}'; }

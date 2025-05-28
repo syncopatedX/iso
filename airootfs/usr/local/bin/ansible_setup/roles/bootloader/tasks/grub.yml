@@ -1,0 +1,27 @@
+---
+# tasks file for GRUB bootloader
+
+- name: Determine GRUB target based on firmware type
+  ansible.builtin.set_fact:
+    grub_target: "{{ 'i386-pc' if ansible_facts.firmware_type | default('bios') == 'bios' else 'x86_64-efi' }}"
+    efi_directory_option: "{{ '--efi-directory=/boot' if ansible_facts.firmware_type | default('bios') != 'bios' else '' }}"
+    bootloader_id_option: "{{ '--bootloader-id=' + dist_name | lower if ansible_facts.firmware_type | default('bios') != 'bios' else '' }}"
+  # ansible_facts.firmware_type might not be available in chroot without setup.
+  # Consider passing SYS_TYPE (BIOS/UEFI) from installer_vars.yml
+
+- name: Install GRUB to disk
+  ansible.builtin.command: "grub-install --target={{ grub_target }} --recheck --force {{ efi_directory_option }} {{ bootloader_id_option }} {{ target_disk }}"
+  changed_when: true # grub-install typically changes state
+  notify: Update grub config
+  # Ensure target_disk is the actual disk device (e.g., /dev/sda), not a partition.
+
+- name: Configure /etc/default/grub
+  ansible.builtin.template:
+    src: default_grub.j2 # Template in roles/bootloader/templates/
+    dest: /etc/default/grub
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Update grub config
+
+# The handler "Update grub config" will run grub-mkconfig

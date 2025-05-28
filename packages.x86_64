@@ -130,6 +130,7 @@ acpi
 alsa-firmware
 alsa-lib
 alsa-plugins
+ansible
 aria2
 b43-firmware
 base-devel

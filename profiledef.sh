@@ -38,5 +38,6 @@ file_permissions=(
   ["/usr/local/bin/Installation_guide"]="0:0:755"
   ["/usr/local/bin/livecd-sound"]="0:0:755"
   ["/usr/local/bin/installer"]="0:0:755"
+  ["/usr/local/bin/installer_new.sh"]="0:0:755"
   ["/usr/local/bin/bootstrap.sh"]="0:0:755"
 )

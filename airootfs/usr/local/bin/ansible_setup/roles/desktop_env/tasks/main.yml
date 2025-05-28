@@ -1,0 +1,90 @@
+---
+# tasks file for desktop_env
+
+# Variable 'wm_de_choice' should come from install_vars.yml
+# It could be 'gnome', 'kde', 'xfce', 'i3', 'openbox', 'none', etc.
+
+- name: Ensure Xorg server and basic drivers are installed
+  ansible.builtin.package:
+    name:
+      - xorg-server
+      - xorg-xinit
+      - xorg-drivers # A group that pulls in common video drivers
+      # mesa # For 3D acceleration
+    state: present
+  when: wm_de_choice is defined and wm_de_choice != "none" and wm_de_choice != "wayland_compositor_only"
+
+# Example for installing a specific Desktop Environment (e.g., XFCE4)
+- name: Install XFCE4 desktop environment
+  ansible.builtin.package:
+    name:
+      - xfce4
+      - xfce4-goodies
+    state: present
+  when: wm_de_choice == "xfce4"
+
+- name: Install GNOME desktop environment
+  ansible.builtin.package:
+    name:
+      - gnome
+      - gnome-tweaks
+    state: present
+  when: wm_de_choice == "gnome"
+
+- name: Install KDE Plasma desktop environment
+  ansible.builtin.package:
+    name:
+      - plasma-meta # or plasma-desktop for a more minimal set
+      - kde-applications-meta # Optional: for a full suite of KDE apps
+    state: present
+  when: wm_de_choice == "kde"
+
+- name: Install i3 window manager and related tools
+  ansible.builtin.package:
+    name:
+      - i3-wm # or i3-gaps
+      - i3status
+      - i3lock
+      - dmenu # or rofi
+      - feh # for wallpaper
+      - picom # for compositing
+    state: present
+  when: wm_de_choice == "i3"
+
+# Add more blocks for other WMs/DEs like openbox, bspwm, sway, etc.
+
+- name: Configure display manager (e.g., LightDM, GDM, SDDM)
+  block:
+    - name: Install selected display manager
+      ansible.builtin.package:
+        name: "{{ display_manager_package }}"
+        state: present
+      vars:
+        # This map could be extended or made more dynamic
+        dm_package_map:
+          lightdm: lightdm lightdm-gtk-greeter
+          gdm: gdm
+          sddm: sddm
+        display_manager_package: "{{ dm_package_map[display_manager_choice | default('lightdm')] }}"
+      when: display_manager_choice is defined and display_manager_choice != "none"
+
+    - name: Enable display manager service
+      ansible.builtin.systemd:
+        name: "{{ display_manager_choice | default('lightdm') }}.service"
+        enabled: yes
+      when: display_manager_choice is defined and display_manager_choice != "none"
+  when: wm_de_choice is defined and wm_de_choice != "none" and startx_method == "display_manager" # Example condition
+
+- name: Configure .xinitrc for starting WM/DE with startx
+  ansible.builtin.template:
+    src: xinitrc.j2 # Template in roles/desktop_env/templates/
+    dest: "/home/{{ username }}/.xinitrc"
+    owner: "{{ username }}"
+    group: "{{ username }}" # Or user's primary group
+    mode: '0755'
+  when: wm_de_choice is defined and wm_de_choice != "none" and startx_method == "startx" # Example condition
+
+# Placeholder for other desktop environment configurations:
+# - Setting default themes, icons, fonts
+# - Configuring panel, menus, keyboard shortcuts
+# - Deploying user-specific dotfiles for the DE/WM

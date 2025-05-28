@@ -1,0 +1,44 @@
+---
+# tasks file for base_config
+- name: Set timezone
+  ansible.builtin.command: "timedatectl set-timezone {{ timezone }}"
+  changed_when: true # Assuming this command always changes state if different
+  notify: Update hwclock
+
+- name: Configure locale
+  ansible.builtin.lineinfile:
+    path: /etc/locale.gen
+    regexp: "^{{ item }}"
+    line: "{{ item }}"
+    state: present
+  loop:
+    - "{{ locale }} UTF-8"
+    - "en_US.UTF-8 UTF-8" # Often good to have a fallback
+  notify: Generate locales
+
+- name: Set default locale
+  ansible.builtin.copy:
+    content: "LANG={{ locale }}\n"
+    dest: /etc/locale.conf
+    mode: '0644'
+  notify: Generate locales # Also notify, as locale.conf change might need it
+
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+
+- name: Update /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "^127.0.1.1"
+    line: "127.0.1.1\t{{ hostname }}.localdomain\t{{ hostname }}"
+    state: present
+  # This is a simple approach; a template might be better for full control
+
+- name: Set console keymap
+  ansible.builtin.copy:
+    content: "KEYMAP={{ keymap }}\n"
+    dest: /etc/vconsole.conf
+    mode: '0644'
+
+# Placeholder for other base configurations (e.g., /etc/environment, sysctl)

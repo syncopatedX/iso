@@ -1,0 +1,47 @@
+#!/bin/bash
+# ~/.xinitrc
+# Executed by startx (run your window manager from here)
+
+# Set user-specific environment variables if needed
+# export SOME_VARIABLE="some_value"
+
+# Start a session manager or a window manager
+# Examples:
+
+{% if wm_de_choice == "xfce4" %}
+exec startxfce4
+{% elif wm_de_choice == "gnome" %}
+exec gnome-session
+{% elif wm_de_choice == "kde" %}
+exec startplasma-x11
+{% elif wm_de_choice == "i3" %}
+# Start i3 window manager
+exec i3
+{% elif wm_de_choice == "openbox" %}
+exec openbox-session
+{% elif wm_de_choice == "bspwm" %}
+# Ensure sxhkd is started for bspwm keybindings
+sxhkd &
+exec bspwm
+{% elif wm_de_choice == "dwm" %}
+# dwm is often started without a session manager
+# Ensure .xprofile or similar sources environment variables if needed
+exec dwm
+{% else %}
+# Fallback or default if no specific choice matches
+# twm &
+# xclock -geometry 50x50-1+1 &
+# xterm -geometry 80x50+494+51 &
+# xterm -geometry 80x20+494-0 &
+# exec xterm -geometry 80x66+0+0 -name login
+# As a very basic default, you might start a terminal or a simple WM
+# For a headless server or if user will configure manually, this can be minimal.
+if [ -f /usr/bin/xterm ]; then
+    exec xterm
+elif [ -f /usr/bin/i3 ]; then # Example fallback
+    exec i3
+else
+    # Last resort if nothing specific is configured
+    echo "No window manager specified in .xinitrc for {{ wm_de_choice }}" >&2
+fi
+{% endif %}

@@ -1,0 +1,6 @@
+---
+# handlers file for bootloader
+- name: Update grub config
+  ansible.builtin.command: "grub-mkconfig -o /boot/grub/grub.cfg"
+  listen: "Update grub config"
+  when: bootloader_choice == 'grub' # Ensure this only runs if GRUB is the chosen bootloader

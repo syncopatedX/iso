@@ -1,0 +1,41 @@
+---
+# tasks file for services
+
+# Variable 'services_to_enable' should be a list from install_vars.yml
+# Example: services_to_enable: [ 'sshd', 'NetworkManager', 'bluetooth' ]
+# The installer script or earlier roles (like network, desktop_env) might populate this.
+
+- name: Enable and start specified services
+  ansible.builtin.systemd:
+    name: "{{ item }}.service" # Assuming items in the list don't include .service
+    enabled: yes
+    state: started
+  loop: "{{ services_to_enable | default([]) }}"
+  when: services_to_enable is defined and services_to_enable | length > 0
+
+# Example of enabling a specific service directly if not covered by the list
+- name: Ensure SSH daemon is enabled and started
+  ansible.builtin.systemd:
+    name: sshd.service
+    enabled: yes
+    state: started
+  when: "'sshd' in (services_to_enable | default([])) or enable_sshd_explicitly | default(true)" # Example condition
+
+- name: Ensure bluetooth service is enabled and started (if bluetooth packages were installed)
+  ansible.builtin.systemd:
+    name: bluetooth.service
+    enabled: yes
+    state: started
+  when: "'bluetooth' in (services_to_enable | default([])) or 'bluez' in (additional_packages | default('').split(' '))" # Example condition
+
+# Placeholder for other service management:
+# - Timer units
+# - Socket activation
+# - Specific service configurations (e.g., drop-in files for systemd units)
+
+# Example: Reload systemd daemon if any unit files were changed by other roles
+# This is often handled by handlers if unit files are templated/copied directly.
+# - name: Reload systemd daemon
+#   ansible.builtin.systemd:
+#     daemon_reload: yes
+#   when: systemd_unit_files_changed_flag # A flag that could be set by other roles

@@ -1,0 +1,32 @@
+---
+# tasks file for bootloader
+
+- name: Ensure bootloader prerequisite packages are installed
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - efibootmgr # Always needed for UEFI systems
+    - grub # If grub is chosen
+    - os-prober # If grub is chosen and os-prober is desired
+    # Add other bootloader specific packages like syslinux, systemd-boot (usually part of systemd)
+  when: bootloader_choice == 'grub' or ansible_facts.virtualization_type != 'docker' # Adjust condition
+
+- name: Include tasks for {{ bootloader_choice | default('grub') }}
+  ansible.builtin.include_tasks: "{{ bootloader_choice | default('grub') }}.yml"
+  # This will load tasks from grub.yml, systemd-boot.yml, etc.
+
+# Fallback or common tasks can go here if any.
+# Most logic will be in the included files.
+
+# Example of how /etc/default/grub might be managed (if using grub.yml)
+# This is just illustrative, the actual task would be in grub.yml
+# - name: Configure /etc/default/grub
+#   ansible.builtin.template:
+#     src: default_grub.j2 # Template file in roles/bootloader/templates/
+#     dest: /etc/default/grub
+#     owner: root
+#     group: root
+#     mode: '0644'
+#   when: bootloader_choice == 'grub'
+#   notify: Update grub config

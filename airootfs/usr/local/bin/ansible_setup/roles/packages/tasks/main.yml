@@ -1,0 +1,95 @@
+---
+# tasks file for packages
+
+- name: Ensure pacman cache is up-to-date
+  ansible.builtin.pacman:
+    update_cache: yes
+  # Run this early to ensure package information is fresh
+
+- name: Install base-devel group (common requirement)
+  ansible.builtin.package:
+    name: base-devel
+    state: present
+
+- name: Install kernel package chosen by user
+  ansible.builtin.package:
+    name: "{{ kernel_choice | default('linux') }}" # From install_vars.yml
+    state: present
+
+- name: Install kernel headers for the chosen kernel
+  ansible.builtin.package:
+    name: "{{ kernel_choice | default('linux') }}-headers"
+    state: present
+
+- name: Install microcode updates (amd-ucode or intel-ucode)
+  ansible.builtin.package:
+    name: "{{ microcode_package }}"
+    state: present
+  vars:
+    # This logic could be in vars or derived from facts if available in chroot
+    microcode_package: "{% if ansible_processor_vendor is defined and 'AMD' in ansible_processor_vendor %}amd-ucode{% elif ansible_processor_vendor is defined and 'Intel' in ansible_processor_vendor %}intel-ucode{% else %}{% endif %}"
+  when: microcode_package | length > 0
+
+- name: Install additional packages selected by user
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ additional_packages.split(' ') | list }}" # Assuming space-separated string from bash
+  when: additional_packages is defined and additional_packages | length > 0
+
+# Placeholder for Window Manager / Desktop Environment specific packages
+# This could be a separate include_tasks based on wm_de_choice
+# Example:
+# - name: Install packages for selected WM/DE
+#   ansible.builtin.include_tasks: "wm_de/{{ wm_de_choice }}.yml"
+#   when: wm_de_choice is defined and wm_de_choice != "none"
+
+- name: Install common utility packages
+  ansible.builtin.package:
+    name:
+      - git
+      - curl
+      - wget
+      - rsync
+      - htop
+      - neovim # Or vim, nano, based on preference or var
+      - man-db
+      - man-pages
+      - sudo # Should be installed by pacstrap, but ensure
+      - openssh # For sshd service
+    state: present
+
+# Placeholder for AUR helper setup (e.g., yay, paru)
+# This would involve:
+# 1. Cloning the AUR helper's git repository
+# 2. Building and installing it using makepkg
+# This should typically be done as the non-root user.
+
+- name: Example - Install yay AUR helper
+  block:
+    - name: Install dependencies for building AUR packages
+      ansible.builtin.package:
+        name:
+          - base-devel
+          - git
+        state: present
+
+    - name: Clone yay repository
+      ansible.builtin.git:
+        repo: 'https://aur.archlinux.org/yay.git'
+        dest: "/tmp/yay" # Or a build directory in user's home
+      become: no # Clone as the regular user if possible, or adjust permissions
+      become_user: "{{ username }}" # From install_vars.yml
+
+    - name: Build and install yay
+      ansible.builtin.command: "makepkg -si --noconfirm"
+      args:
+        chdir: "/tmp/yay"
+      become: no
+      become_user: "{{ username }}"
+      changed_when: true # makepkg output can be checked for "installed yay"
+  when: install_aur_helper | default(false) # Variable from install_vars.yml
+
+- name: Clean pacman cache
+  ansible.builtin.command: "pacman -Scc --noconfirm"
+  changed_when: false # This command doesn't change system state in a way Ansible tracks as a config change

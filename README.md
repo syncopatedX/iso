@@ -141,3 +141,200 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📜 License
 
 This project is licensed under the GPL-2.0 license.
+
+```mermaid
+stateDiagram-v2
+    direction TB
+
+    [*] --> StartInstaller
+    state StartInstaller {
+        [*] --> CheckDependencies
+    }
+
+    state CheckDependencies {
+        [*] --> LoadCheckpoint
+        LoadCheckpoint --> HandleError
+    }
+
+    state LoadCheckpoint {
+        [*] --> GatherParams : No/Old Checkpoint
+        [*] --> SkipStep : Checkpoint Found
+    }
+
+    state "Installer: Phase 1 - Setup (Live ISO)" as Installer1 {
+        GatherParams --> Checkpoint_Params
+        Checkpoint_Params --> SetupDisk
+        SetupDisk --> Checkpoint_Disk
+        Checkpoint_Disk --> InstallBase
+        InstallBase --> Checkpoint_Base
+        Checkpoint_Base --> GenAnsibleVars
+        GenAnsibleVars --> Checkpoint_Vars
+        Checkpoint_Vars --> CopyAnsible
+        CopyAnsible --> Checkpoint_Copy
+    }
+
+    Checkpoint_Copy --> TriggerAnsible
+
+    state "Ansible Execution (Inside Chroot)" as Ansible {
+        TriggerAnsible --> ReadVars
+        ReadVars --> RunBaseConfig
+        RunBaseConfig --> RunUsers
+        RunUsers --> RunPackages
+        RunPackages --> RunBootloader
+        RunBootloader --> RunNetwork
+        RunNetwork --> RunServices
+        RunServices --> RunDesktop
+        RunDesktop --> AnsibleSuccess
+    }
+
+    AnsibleSuccess --> Checkpoint_Ansible
+    Checkpoint_Ansible --> PostInstall
+
+    state "Installer: Phase 2 - Cleanup (Live ISO)" as Installer2 {
+        PostInstall --> InstallationComplete
+        InstallationComplete --> [*]
+    }
+
+    state "Error Handling" as Errors {
+        GatherParams --> HandleError
+        SetupDisk --> HandleError
+        InstallBase --> HandleError
+        GenAnsibleVars --> HandleError
+        CopyAnsible --> HandleError
+        TriggerAnsible --> HandleError
+        Ansible --> HandleError
+
+        HandleError --> [*]
+    }
+
+    %% SkipStep transitions
+    SkipStep --> Checkpoint_Params
+    SkipStep --> Checkpoint_Disk
+    SkipStep --> Checkpoint_Base
+    SkipStep --> Checkpoint_Vars
+    SkipStep --> Checkpoint_Copy
+    SkipStep --> TriggerAnsible
+```
+
+```mermaid
+---
+config:
+  theme: redux-color
+---
+sequenceDiagram
+    participant User
+    participant Installer_new.sh as Installer
+    participant Dialog
+    participant Live_ISO_System as LiveOS
+    participant Target_Disk as Disk
+    participant Chroot_System as Chroot
+    participant Ansible_Playbook as Ansible
+    User->>Installer: Starts ./installer_new.sh
+    activate Installer
+    Installer->>LiveOS: Check Dependencies (root, dialog)
+    LiveOS-->>Installer: OK
+    Installer->>LiveOS: Load Checkpoint (if exists)
+    LiveOS-->>Installer: Checkpoint Data
+    rect rgb(230, 240, 255)
+        note over Installer, Dialog: Gather Parameters
+        Installer->>Dialog: Request Console Keymap
+        Dialog-->>User: Show Menu
+        User-->>Dialog: Select Keymap
+        Dialog-->>Installer: Keymap
+        Installer->>LiveOS: loadkeys <keymap>
+        Installer->>Dialog: Request Disk, Partitions, FS, LUKS, LVM
+        Dialog-->>User: Show Menus/Inputs
+        User-->>Dialog: Provide Choices
+        Dialog-->>Installer: Disk/FS/LUKS/LVM Settings
+        Installer->>Dialog: Request Hostname, User, Passwords
+        Dialog-->>User: Show Inputs/Passwords
+        User-->>Dialog: Provide Info
+        Dialog-->>Installer: Host/User/PW Info
+        Installer->>Dialog: Request Locale, Timezone, Packages
+        Dialog-->>User: Show Menus/Inputs
+        User-->>Dialog: Provide Choices
+        Dialog-->>Installer: Locale/TZ/Pkg Info
+        Installer->>Installer: save_checkpoint("parameters_gathered")
+    end
+    rect rgb(255, 230, 200)
+        note over Installer, Disk: Disk Setup
+        Installer->>LiveOS: Run wipefs/sgdisk/parted (based on choice)
+        activate LiveOS
+        LiveOS->>Disk: Wipe & Partition Disk
+        Disk-->>LiveOS: OK
+        opt LUKS Enabled
+            Installer->>LiveOS: Run cryptsetup luksFormat
+            LiveOS->>Disk: Encrypt Partition
+            Installer->>LiveOS: Run cryptsetup open
+            LiveOS-->>Installer: LUKS device mapped
+        end
+        opt LVM Enabled
+            note over Installer, LiveOS: LVM Setup (TODO in script)
+        end
+        Installer->>LiveOS: Run mkfs.<fstype> / mkfs.fat
+        LiveOS->>Disk: Format Partitions
+        Disk-->>LiveOS: OK
+        Installer->>LiveOS: Run mount (root, boot)
+        LiveOS->>Disk: Mount Filesystems to /mnt
+        Disk-->>LiveOS: OK
+        deactivate LiveOS
+        Installer->>Installer: save_checkpoint("disk_setup_complete")
+    end
+    rect rgb(200, 255, 200)
+        note over Installer, LiveOS: Base Installation
+        Installer->>LiveOS: Run reflector (optional)
+        Installer->>LiveOS: Run pacstrap -K /mnt base base-devel <kernel> ansible ...
+        activate LiveOS
+        LiveOS-->>Installer: Pacstrap OK
+        Installer->>LiveOS: Run genfstab -U /mnt >> /mnt/etc/fstab
+        LiveOS-->>Installer: Fstab OK
+        deactivate LiveOS
+        Installer->>Installer: save_checkpoint("base_system_installed")
+    end
+    rect rgb(230, 230, 230)
+        note over Installer, Disk: Ansible Prep
+        Installer->>Disk: Write /mnt/etc/ansible/install_vars.yml (WARNING: Plaintext PWs)
+        Installer->>Installer: save_checkpoint("ansible_vars_generated")
+        Installer->>LiveOS: Copy ./ansible_setup to /mnt/root/
+        LiveOS->>Disk: Copy Files
+        Installer->>Installer: save_checkpoint("ansible_playbooks_copied")
+    end
+    rect rgb(255, 200, 255)
+        note over Installer, Ansible: Ansible Configuration
+        Installer->>LiveOS: Run arch-chroot /mnt ...
+        activate LiveOS
+        LiveOS->>Chroot: Enter Chroot
+        activate Chroot
+        Chroot->>Ansible: Execute ansible-playbook site.yml
+        activate Ansible
+        Ansible->>Chroot: Read install_vars.yml & Run Roles (Base, Users, Pkgs, GRUB, etc.)
+        Chroot-->>Ansible: System Configured
+        Ansible-->>Chroot: Playbook Success
+        deactivate Ansible
+        Chroot-->>LiveOS: Exit Chroot
+        deactivate Chroot
+        LiveOS-->>Installer: Ansible OK
+        deactivate LiveOS
+        Installer->>Installer: save_checkpoint("ansible_configuration_complete")
+    end
+    rect rgb(210, 210, 210)
+        note over Installer, Dialog: Cleanup & Finish
+        Installer->>LiveOS: Unmount /mnt/*, Close LUKS, rm /tmp files
+        Installer->>Dialog: Show "Installation Complete"
+        activate Dialog
+        Dialog-->>User: Show Message
+        User-->>Dialog: Acknowledge
+        Dialog-->>Installer: OK
+        deactivate Dialog
+    end
+    Installer-->>User: Exit Script
+    deactivate Installer
+    alt Error Occurs
+        Installer->>Dialog: Show Error Message
+        Dialog-->>User: Show Error
+        User-->>Dialog: Acknowledge
+        Dialog-->>Installer: OK
+        Installer->>LiveOS: Run Cleanup
+        Installer-->>User: Exit with Error
+    end
+```

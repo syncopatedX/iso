@@ -26,6 +26,9 @@ cat >>packages.x86_64 <<-EOF
 	b43-firmware
 	base-devel
 	bash
+	btrfs-progs
+	calamares
+	calamares-branding
 	cargo
 	chaotic-keyring
 	chaotic-mirrorlist
@@ -44,6 +47,7 @@ cat >>packages.x86_64 <<-EOF
 	kitty
 	libnotify
 	lm_sensors
+	lvm2
 	most
 	net-tools
 	networkmanager

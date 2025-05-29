@@ -13,7 +13,11 @@ fi
 export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin:$PATH"
 
-systemctl start NetworkManager
+# If in a live ISO session (i.e., /run/archiso exists)
+# and NetworkManager is not already active, then attempt to start it.
+if [ -d /run/archiso ] && ! systemctl is-active --quiet NetworkManager.service; then
+  systemctl start NetworkManager
+fi
 
 pulseaudio &
 nitrogen --restore &

@@ -134,7 +134,9 @@ typeset -a WM_PKGS=(
 	"broot"
 	"btop"
 	"calcurse"
+	"cosmic-icons-git"
 	"dconf"
+	"deepin-icon-theme"
 	"dmenu"
 	"dunst"
 	"feh"
@@ -1917,6 +1919,8 @@ install_base() {
 		cp -vf /etc/modprobe.d "$MNT/etc/"
 		cp -rfv /etc/sysctl.d "$MNT/etc/"
 		cp -rfv /etc/sway "$MNT/etc/"
+		mkdir -p "$MNT/etc/xdg/autostart/"
+		cp -vf /etc/xdg/autostart/live-installer.desktop "$MNT/etc/xdg/autostart/live-installer.desktop"
 		cp -vf /etc/skel/.zshrc "$MNT/etc/skel/.zshrc"
 		cp -vf /etc/skel/.zshenv "$MNT/etc/skel/.zshenv"
 		cp -vf /etc/skel/.zprofile "$MNT/etc/skel/.zprofile"
@@ -1927,7 +1931,7 @@ install_base() {
 		cp -rfv /etc/skel/.config "$MNT/etc/skel/"
 		cp -rfv /etc/skel/.local "$MNT/etc/skel/"
 		mkdir -p "$MNT/usr/share/themes/"
-		cp -rfv /usr/share/themes/oomox-soundbot "$MNT/usr/share/themes/"
+		# cp -rfv /usr/share/themes/oomox-soundbot "$MNT/usr/share/themes/"
 		mkdir -p "$MNT/usr/share/backgrounds/"
 		cp -rfv /usr/share/backgrounds/syncopated "$MNT/usr/share/backgrounds/"
 	else
@@ -3282,12 +3286,6 @@ zshrc() {
 		alias grep='grep --color=auto'
 		alias grub-update='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 		alias mirror-update='sudo reflector --verbose --connection-timeout 2 --threads 10 --latest 200 --age 24 --score 75 --sort rate --fastest 6 --save /etc/pacman.d/mirrorlist'
-
-
-		ls() # ls with preferred arguments
-		{
-			    command ls --color=auto -F1 "\$@"
-		}
 
 		cd() # cd and ls after
 		{

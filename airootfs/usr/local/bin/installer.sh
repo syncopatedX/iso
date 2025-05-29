@@ -393,7 +393,7 @@ declare -A WM_EXT=(
 	[bspwm]='bspwm jgmenu tint2 sxhkd'
 	[fluxbox]='fluxbox jgmenu lxmenu-data'
 	[i3 - wm]='i3status-rust sxhkd perl-anyevent-i3'
-	[sway]='sway waybar wofi mako foot swaylock swayidle swaybg wl-clipboard'
+	[sway]='sway waybar rofi-wayland mako foot swaylock swayidle swaybg wl-clipboard'
 	[openbox]='openbox obconf jgmenu tint2 conky lxmenu-data'
 	[dwm]=''
 ) # }

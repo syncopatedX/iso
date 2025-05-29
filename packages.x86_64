@@ -49,6 +49,7 @@ exfatprogs
 eza
 f2fs-tools
 fatresize
+firewalld
 foot-terminfo
 fsarchiver
 gcc-libs

@@ -4,3 +4,4 @@ qcow2/
 /.qodo/
 .ansible/
 *.code-workspace
+cliff.toml

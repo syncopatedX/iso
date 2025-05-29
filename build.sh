@@ -27,8 +27,6 @@ cat >>packages.x86_64 <<-EOF
 	base-devel
 	bash
 	btrfs-progs
-	calamares
-	calamares-branding
 	cargo
 	chaotic-keyring
 	chaotic-mirrorlist
@@ -135,7 +133,7 @@ shift $((OPTIND - 1))
 # fi
 
 # build it
-#mkarchiso -v .
+mkarchiso -m iso -v .
 
 # clean up
 rm -rf work

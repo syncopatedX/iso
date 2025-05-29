@@ -393,6 +393,7 @@ declare -A WM_EXT=(
 	[bspwm]='bspwm jgmenu tint2 sxhkd'
 	[fluxbox]='fluxbox jgmenu lxmenu-data'
 	[i3 - wm]='i3status-rust sxhkd perl-anyevent-i3'
+	[sway]='sway waybar wofi mako foot swaylock swayidle swaybg wl-clipboard'
 	[openbox]='openbox obconf jgmenu tint2 conky lxmenu-data'
 	[dwm]=''
 ) # }
@@ -401,6 +402,7 @@ declare -A WM_EXT=(
 declare -A SESSIONS=(
 	[dwm]='dwm'
 	[i3 - wm]='i3'
+	[sway]='sway'
 	[bspwm]='bspwm'
 	[fluxbox]='startfluxbox'
 	[openbox]='openbox-session'
@@ -409,6 +411,7 @@ declare -A SESSIONS=(
 # packages installed for each login option {
 declare -A LOGIN_PKGS=(
 	[ly]='ly'
+	[greetd]='greetd'
 	[console]='xorg-xinit'
 	[lightdm]='lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings accountsservice'
 ) # }
@@ -1006,6 +1009,7 @@ select_sessions() {
 	dlg INSTALL_WMS check "Sessions" "$_sessions\n" \
 		openbox "A lightweight, powerful, and highly configurable stacking wm" "$(ofn openbox "$INSTALL_WMS")" \
 		i3-wm "The improved dynamic tiling window manager" "$(ofn i3-wm "$INSTALL_WMS")" \
+		sway "Dynamic tiling window manager for wayland" "$(ofn sway "$INSTALL_WMS")" \
 		dwm "A dynamic WM for X that manages windows in tiled, floating, or monocle layouts" "$(ofn dwm "$INSTALL_WMS")" \
 		bspwm "A tiling wm that represents windows as the leaves of a binary tree" "$(ofn bspwm "$INSTALL_WMS")" \
 		fluxbox "A lightweight and highly-configurable window manager" "$(ofn fluxbox "$INSTALL_WMS")"
@@ -1900,6 +1904,7 @@ install_base() {
 		cp -vf /etc/lsb-release "$MNT/etc/"
 		cp -vf /etc/modprobe.d "$MNT/etc/"
 		cp -rfv /etc/sysctl.d "$MNT/etc/"
+		cp -rfv /etc/sway "$MNT/etc/"
 		cp -vf /etc/skel/.zshrc "$MNT/etc/skel/.zshrc"
 		cp -vf /etc/skel/.zshenv "$MNT/etc/skel/.zshenv"
 		cp -vf /etc/skel/.zprofile "$MNT/etc/skel/.zprofile"

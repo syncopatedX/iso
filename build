@@ -135,7 +135,7 @@ shift $((OPTIND - 1))
 # fi
 
 # build it
-mkarchiso -v .
+#mkarchiso -v .
 
 # clean up
 rm -rf work

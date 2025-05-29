@@ -17,6 +17,8 @@ export PATH="$HOME/.local/bin:$PATH"
 # and NetworkManager is not already active, then attempt to start it.
 if [ -d /run/archiso ] && ! systemctl is-active --quiet NetworkManager.service; then
   systemctl start NetworkManager
+  nmcli connection modify "Wired Connection 1" ipv6.method disabled
+  systemctl restart NetworkManager
 fi
 
 pulseaudio &

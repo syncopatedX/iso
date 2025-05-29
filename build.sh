@@ -9,66 +9,6 @@ if ! hash mkarchiso curl >/dev/null 2>&1; then
 	exit 1
 fi
 
-# create a list of packages
-cp /usr/share/archiso/configs/releng/packages.x86_64 packages.x86_64
-# we don't use the grml zsh configs
-sed -i '/grml-zsh-config/d' packages.x86_64
-# add the Syncopated live session specific packages to the list
-cat >>packages.x86_64 <<-EOF
-
-	# live session packages
-	acpi
-	alsa-firmware
-	alsa-lib
-	alsa-plugins
-	ansible
-	aria2
-	b43-firmware
-	base-devel
-	bash
-	btrfs-progs
-	cargo
-	chaotic-keyring
-	chaotic-mirrorlist
-	curl
-	dialog
-	dmenu
-	dunst
-	eza
-	gcc-libs
-	git
-	gsimplecal
-	htop
-	i3-wm
-	i3status-rust
-	iotop
-	kitty
-	libnotify
-	lm_sensors
-	lvm2
-	most
-	net-tools
-	networkmanager
-	nitrogen
-	oh-my-zsh-git
-	pacman-contrib
-	pamixer
-	paru
-	pavucontrol
-	pulseaudio
-	python-pip
-	python-setuptools
-	ranger
-	rofi
-	rubygems
-	sxhkd
-	terminator
-	wireless-regdb
-	xorg-server
-	xorg-xinit
-	xterm
-EOF
-
 while getopts ":hLRt:" OPT; do
 	case "$OPT" in
 	h)

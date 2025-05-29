@@ -13,6 +13,8 @@ fi
 export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin:$PATH"
 
+systemctl start NetworkManager
+
 pulseaudio &
 nitrogen --restore &
 xset dpms 600 900 1200

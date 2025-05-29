@@ -1,0 +1,53 @@
+# system power
+alias reboot="sudo shutdown -r now"
+alias shutdown="sudo shutdown -h now"
+
+# list input devices
+alias lsin="sudo libinput list-devices"
+
+alias h="history"
+
+alias cl="tput clear && tput cup 1"
+
+# confirm before overwriting something
+alias cp="cp -i"
+# confirm before overwriting something
+alias mv="mv -iv"
+# human-readable sizes
+alias df='df -h'
+
+# use exa for directory listing
+alias br="broot"
+
+alias ll="eza --sort=ext --long --level=2 --icons auto"
+alias ls="eza -h --group-directories-first -g --icons auto"
+alias llh="eza --sort=ext --long -a --level=2 --icons auto"
+alias llt="eza --sort=ext --long -a --level=2 --icons auto -s modified"
+
+# if available use bat instead of cat
+if [ -x "$(command -v bat)" ]; then
+  alias cat="bat -p"
+fi
+
+# mlocate
+alias updatedb='sudo updatedb'
+alias locate='sudo locate'
+
+# shortcut for ranger
+alias ra="ranger"
+
+# download
+alias dl="aria2c"
+alias curl="curlie"
+
+alias duf="sudo duf"
+alias top="sudo btm --enable_cache_memory --enable_gpu_memory --process_command -n"
+alias du="sudo dust -p -r -x -d 3 -n 80"
+#exit
+alias e="exit"
+
+alias m="micro"
+
+alias jq="jq -r"
+
+alias mpv="mpv --hwdec=auto --profile=fast"

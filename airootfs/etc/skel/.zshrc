@@ -27,14 +27,9 @@ alias grep='grep --color=auto'
 alias grub-update='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 alias mirror-update='sudo reflector --verbose --score 100 -l 50 -f 10 --sort rate --save /etc/pacman.d/mirrorlist'
 
-ls() # ls with preferred arguments
-{
-	command ls --color=auto -F1 "$@"
-}
-
 cd() # cd and ls after
 {
-	builtin cd "$@" && command ls --color=auto -F
+	builtin cd "$@" && command ls -lah
 }
 
 src() # recompile completion and reload zsh

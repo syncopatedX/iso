@@ -7,7 +7,7 @@ iso_name="syncopated"
 iso_label="SL$(date +%Y%m)"
 iso_publisher="Syncopated <https://gitlab.com/syncopatedX>"
 iso_application="Linux Live/Rescue CD"
-iso_version="$(date +%Y.%m.%d)"
+iso_version="$(git describe --tags)"
 install_dir="arch"
 buildmodes=('iso')
 

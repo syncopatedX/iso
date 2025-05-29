@@ -2440,8 +2440,8 @@ install_background() {
 			if pacman-key --list-keys | grep -q "expired.*Chaotic" || ! pacman-key --list-keys | grep -q "$key"; then
 				chrun "pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com"
 				chrun "pacman-key --lsign-key 3056513887B78AEB"
-				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm"
-				chrun "pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm"
+				chrun "yes | pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm"
+				chrun "yes | pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm"
 				chrun "pacman -Syu"
 			fi
 

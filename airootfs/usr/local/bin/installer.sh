@@ -5,8 +5,16 @@
 # Some ideas and code reworked from other resources
 # AIF, Calamares, and the Arch Wiki.. Credit where credit is due
 
+FLAG_FILE="/root/.installer_has_run"
+
+if [ -f "$FLAG_FILE" ]; then
+    exit 0
+fi
+
+
+
 # shellcheck disable=2086,2046,2254,2164,2030,2031,2001
-VER=2.29
+VER=2.30
 
 # default values {
 
@@ -3863,5 +3871,7 @@ fi
 while :; do
 	main
 done
+
+touch "$FLAG_FILE"
 
 # vim:fdm=marker:fmr={,}

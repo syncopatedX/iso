@@ -1,0 +1,7 @@
+# /etc/xdg/autostart/live-installer.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/local/bin/live-installer.sh
+Name=Live Installer
+Comment=Runs installer script on first login
+X-GNOME-Autostart-enabled=true

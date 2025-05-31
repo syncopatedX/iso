@@ -40,7 +40,7 @@ Syncopated ISO aims to support:
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://gitlab.com/syncopatedX/iso.git # Or your current repo URL
+    git clone https://github.com/syncopatedX/iso.git
     cd iso
     ```
 
@@ -73,25 +73,6 @@ Syncopated ISO aims to support:
 3. **Login:**
       * *(TODO: Document the default username and password for the live environment).*
 
-## Using the Installer
-
-The ISO includes a custom installer script located at `/usr/local/bin/installer.sh`.
-
-**⚠️ WARNING\! ⚠️**
-
-* **Running this script WILL partition and format your hard drive.**
-* **YOU WILL LOSE ALL DATA on the target drive.**
-* **BACK UP ALL YOUR DATA before proceeding.**
-* **Review the script's code before running it.**
-* **Use at your own risk\!**
-
-To run the installer (after booting the live CD):
-
-```bash
-sudo installer.sh
-```
-
-Follow the on-screen prompts carefully.
 
 ## Testing
 

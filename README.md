@@ -6,7 +6,7 @@ Continuing the spirit and building upon the foundation of the **[ArchLabs Linux]
 
 ## About
 
-This project aims to provide a lean-yet-functional Arch Linux environment, both as a bootable live medium and as an installable system. It's built using the [Archiso](https://wiki.archlinux.org/title/Archiso) framework and is intended for users who appreciate a "do-it-yourself" approach but want a well-configured starting point. We strive to maintain the minimalist aesthetic and user control that were hallmarks of ArchLabs.
+This project aims to provide a lean-yet-functional Arch Linux environment, both as a bootable live medium and as an installable system, built using the [Archiso](https://wiki.archlinux.org/title/Archiso) framework. We are proud to continue the legacy of ArchLabs Linux, a project distinguished by the significant collaborative effort of its community. Its renowned clean and minimal design resulted in excellent performance, offering a superb foundation for a custom distribution like Syncopated ISO. We strive to maintain this minimalist aesthetic and user control, providing a well-configured starting point for users who appreciate a "do-it-yourself" approach. The installer script ([`installer.sh`](airootfs/usr/local/bin/installer.sh:0)) is also a direct descendant of this valuable ArchLabs work.
 
 ## Features
 
@@ -79,7 +79,6 @@ The ISO includes a custom installer script located at `/usr/local/bin/installer.
 
 **⚠️ WARNING\! ⚠️**
 
-* **This is a custom script, evolving from ArchLabs, and may contain bugs.**
 * **Running this script WILL partition and format your hard drive.**
 * **YOU WILL LOSE ALL DATA on the target drive.**
 * **BACK UP ALL YOUR DATA before proceeding.**

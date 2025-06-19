@@ -30,6 +30,7 @@ cloud-init
 cryptsetup
 curl
 darkhttpd
+deja-dup
 ddrescue
 dhcpcd
 dialog

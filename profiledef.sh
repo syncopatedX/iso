@@ -6,7 +6,7 @@ iso_name="syncopated"
 
 iso_label="SL$(date +%Y%m)"
 iso_publisher="Syncopated <https://github.com/syncopatedX>"
-iso_application="Linux Live/Rescue CD"
+iso_application="ArchLabs Live"
 iso_version="$(git describe --tags)"
 install_dir="arch"
 buildmodes=('iso')

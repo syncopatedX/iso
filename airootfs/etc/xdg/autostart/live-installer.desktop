@@ -3,5 +3,6 @@
 Type=Application
 Exec=/usr/local/bin/live-installer.sh
 Name=Live Installer
+Terminal=true
 Comment=Runs installer script on first login
 X-GNOME-Autostart-enabled=true

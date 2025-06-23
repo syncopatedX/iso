@@ -136,6 +136,7 @@ typeset -a WM_PKGS=(
 	"calcurse"
 	"cosmic-icons-git"
 	"dconf"
+	"dex"
 	"deepin-icon-theme"
 	"dmenu"
 	"dunst"

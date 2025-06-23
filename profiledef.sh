@@ -5,9 +5,9 @@
 iso_name="syncopated"
 
 iso_label="SL$(date +%Y%m)"
-iso_publisher="Syncopated <https://gitlab.com/syncopatedX>"
-iso_application="Linux Live/Rescue CD"
-iso_version="$(date +%Y.%m.%d)"
+iso_publisher="Syncopated <https://github.com/syncopatedX>"
+iso_application="ArchLabs Live"
+iso_version="$(git describe --tags)"
 install_dir="arch"
 buildmodes=('iso')
 
@@ -37,6 +37,5 @@ file_permissions=(
   ["/usr/local/bin/choose-mirror"]="0:0:755"
   ["/usr/local/bin/Installation_guide"]="0:0:755"
   ["/usr/local/bin/livecd-sound"]="0:0:755"
-  ["/usr/local/bin/installer"]="0:0:755"
-  ["/usr/local/bin/bootstrap.sh"]="0:0:755"
+  ["/usr/local/bin/installer.sh"]="0:0:755"
 )

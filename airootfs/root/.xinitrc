@@ -13,6 +13,14 @@ fi
 export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin:$PATH"
 
+# If in a live ISO session (i.e., /run/archiso exists)
+# and NetworkManager is not already active, then attempt to start it.
+if [ -d /run/archiso ] && ! systemctl is-active --quiet NetworkManager.service; then
+  systemctl start NetworkManager
+  nmcli connection modify "Wired Connection 1" ipv6.method disabled
+  systemctl restart NetworkManager
+fi
+
 pulseaudio &
 nitrogen --restore &
 xset dpms 600 900 1200
